@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ラブ ライブプロンプター</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ヘッダー */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #111;
+    border-bottom: 1px solid #222;
+  }
+  .header-title {
+    font-size: 14px;
+    color: #888;
+    font-weight: bold;
+  }
+  .segment-label {
+    font-size: 12px;
+    color: #ff4444;
+    background: #1a0000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #ff4444;
+  }
+
+  /* タイマー */
+  .timer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 10px 20px;
+    background: #111;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .timer-display {
+    font-size: 36px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+  .timer-display.warning { color: #ffaa00; }
+  .timer-display.danger { color: #ff4444; }
+  .timer-btn {
+    background: #222;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .timer-btn:hover { background: #333; }
+  .timer-btn.active { background: #ff4444; border-color: #ff4444; }
+
+  /* メインコンテンツ */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .prompt-card {
+    width: 100%;
+    max-width: 700px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .prompt-category {
+    font-size: 13px;
+    color: #ff4444;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    font-weight: bold;
+  }
+
+  .prompt-text {
+    font-size: 42px;
+    font-weight: bold;
+    line-height: 1.3;
+    color: #ffffff;
+    margin-bottom: 24px;
+    text-shadow: 0 0 30px rgba(255,68,68,0.3);
+  }
+
+  .prompt-sub {
+    font-size: 18px;
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .prompt-tips {
+    font-size: 14px;
+    color: #555;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 12px 20px;
+    margin-top: 16px;
+    line-height: 1.8;
+    text-align: left;
+  }
+  .prompt-tips strong {
+    color: #ffaa00;
+  }
+
+  /* ナビゲーション */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: #111;
+    border-top: 1px solid #222;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+    font-weight: bold;
+  }
+  .nav-btn:hover { background: #2a2a2a; }
+  .nav-btn.primary {
+    background: #ff4444;
+    border-color: #ff4444;
+    flex: 2;
+    font-size: 18px;
+  }
+  .nav-btn.primary:hover { background: #ff6666; }
+
+  .progress-info {
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+    min-width: 60px;
+  }
+
+  /* セグメント選択 */
+  .segment-selector {
+    display: flex;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #0d0d0d;
+    overflow-x: auto;
+    border-bottom: 1px solid #1a1a1a;
+    scrollbar-width: none;
+  }
+  .segment-selector::-webkit-scrollbar { display: none; }
+
+  .seg-btn {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #666;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .seg-btn:hover { color: #aaa; border-color: #444; }
+  .seg-btn.active {
+    background: #ff4444;
+    border-color: #ff4444;
+    color: #fff;
+  }
+
+  /* 緊急ネタモーダル */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 100;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffaa00;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .quick-item {
+    padding: 14px;
+    border: 1px solid #222;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+  }
+  .quick-item:hover { border-color: #ff4444; background: #1a0000; }
+  .modal-close {
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    background: #222;
+    border: 1px solid #333;
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">🎭 ラブ ライブプロンプター</div>
+  <div class="segment-label" id="segLabel">オープニング</div>
+</div>
+
+<div class="segment-selector">
+  <button class="seg-btn active" onclick="goToSegment(0)">🟢 オープニング</button>
+  <button class="seg-btn" onclick="goToSegment(1)">😤 本日キレた話</button>
+  <button class="seg-btn" onclick="goToSegment(2)">🎭 キャラ紹介</button>
+  <button class="seg-btn" onclick="goToSegment(3)">🙋 Q&A</button>
+  <button class="seg-btn" onclick="goToSegment(4)">😂 あるある</button>
+  <button class="seg-btn" onclick="goToSegment(5)">🔥 盛り上げ</button>
+  <button class="seg-btn" onclick="goToSegment(6)">👋 エンディング</button>
+</div>
+
+<div class="timer-bar">
+  <button class="timer-btn" id="timerResetBtn" onclick="resetTimer()">↺ リセット</button>
+  <div class="timer-display" id="timerDisplay">05:00</div>
+  <button class="timer-btn" id="timerStartBtn" onclick="toggleTimer()">▶ スタート</button>
+</div>
+
+<div class="main">
+  <div class="prompt-card" id="promptCard">
+    <div class="prompt-category" id="promptCategory">CATEGORY</div>
+    <div class="prompt-text" id="promptText">プロンプトテキスト</div>
+    <div class="prompt-sub" id="promptSub">サブテキスト</div>
+    <div class="prompt-tips" id="promptTips"></div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn" onclick="prevPrompt()">← 前</button>
+  <div class="progress-info" id="progressInfo">1 / 1</div>
+  <button class="nav-btn primary" onclick="nextPrompt()">次のネタ →</button>
+  <button class="nav-btn" onclick="showQuickModal()" style="background:#1a1500; border-color:#ffaa00; color:#ffaa00;">⚡ 緊急</button>
+</div>
+
+<!-- 緊急ネタモーダル -->
+<div class="modal-overlay" id="quickModal">
+  <div class="modal-box">
+    <div class="modal-title">⚡ 緊急ネタ一覧</div>
+    <div class="quick-item" onclick="useQuick('視聴者の仕事を聞いてみる')">💬 視聴者の仕事を聞いてみる</div>
+    <div class="quick-item" onclick="useQuick('「俺の身長何センチに見える？」クイズ')">📏 身長当てクイズ</div>
+    <div class="quick-item" onclick="useQuick('「仮面外す条件」を視聴者と決める')">🎭 仮面の条件を決める</div>
+    <div class="quick-item" onclick="useQuick('最近ムカついたことを語る（短め）')">😤 ムカついた話（短め）</div>
+    <div class="quick-item" onclick="useQuick('視聴者に「キレていいこと」を募集する')">🔥 キレネタ募集</div>
+    <div class="quick-item" onclick="useQuick('好きな食べ物で2択対決')">🍜 2択対決</div>
+    <div class="quick-item" onclick="useQuick('「でかい人あるある」を1個語る')">📦 でかいあるある</div>
+    <div class="quick-item" onclick="useQuick('無言で何かを食べる（ASMR風）')">🎙 無言ASMR</div>
+    <button class="modal-close" onclick="closeQuickModal()">閉じる</button>
+  </div>
+</div>
+
+<script>
+// ===== プロンプトデータ =====
+const segments = [
+  {
+    label: "オープニング",
+    time: 300,
+    prompts: [
+      {
+        category: "🟢 オープニング",
+        text: "無言で登場\n数秒間フリーズ",
+        sub: "「でかすぎてフレームに収まらんな」",
+        tips: "💡 最初の笑いをここでとる\n💡 登場インパクトが全て\n💡 何も言わず見つめるだけでもOK"
+      },
+      {
+        category: "🟢 オープニング",
+        text: "自己紹介\n（30秒以内）",
+        sub: "「マスクは素顔バレ防止です（笑）」",
+        tips: "💡 毎回同じ自己紹介でOK\n💡 視聴者が覚えやすいテンプレを作る\n💡 長くしない・テンポ命"
+      }
+    ]
+  },
+  {
+    label: "本日キレた話",
+    time: 600,
+    prompts: [
+      {
+        category: "😤 本日キレた話",
+        text: "「今日マジで\nキレそうだった話」",
+        sub: "今日の配送・日常で実際あった話を語る",
+        tips: "💡 具体的な状況を話す\n💡 「〇〇な人いる？」と共感を引く\n💡 最後は笑いで締める"
+      },
+      {
+        category: "😤 本日キレた話",
+        text: "視聴者に\n「今日何があった？」",
+        sub: "コメントを読んで「それはキレていい」と反応",
+        tips: "💡 コメントを名前で読み上げる\n💡 「それは俺より最悪だ」で笑いをとる\n💡 共感でコメントが増える"
+      }
+    ]
+  },
+  {
+    label: "キャラ紹介",
+    time: 300,
+    prompts: [
+      {
+        category: "🎭 キャラ紹介",
+        text: "「なぜ仮面を\nつけてるのか」",
+        sub: "毎回違う嘘の理由を言う",
+        tips: "💡 「前世がヒーローだったから」\n💡 「素顔が眩しすぎるから」\n💡 絶対に本当の理由は言わない"
+      },
+      {
+        category: "🎭 キャラ紹介",
+        text: "「仮面を外す条件」\n視聴者と決める",
+        sub: "「フォロワー◯万人になったら外す」",
+        tips: "💡 達成できそうで遠い数字に設定\n💡 視聴者に応援させる仕組みを作る\n💡 「もうすぐだ！」という期待を保つ"
+      }
+    ]
+  },
+  {
+    label: "Q&A",
+    time: 600,
+    prompts: [
+      {
+        category: "🙋 Q&A",
+        text: "コメントから\n質問を読む",
+        sub: "仕事・体・性格・日常なんでもOK",
+        tips: "💡 名前を呼ぶ→コメント増える\n💡 変な質問ほどキレキャラが活きる\n💡 「そんなこと聞く？」がウケる"
+      },
+      {
+        category: "🙋 Q&A",
+        text: "「俺の身長\n何センチに見える？」",
+        sub: "コメントで予想させる → 全員外れる",
+        tips: "💡 正解者：「天才か」\n💡 外れた人：「見る目ないな（キレ）」\n💡 参加型なのでコメントが爆発する"
+      }
+    ]
+  },
+  {
+    label: "あるある",
+    time: 600,
+    prompts: [
+      {
+        category: "😂 あるある",
+        text: "「でかい人あるある\n言っていい？」",
+        sub: "身長193cmのリアルを語る",
+        tips: "💡 インターホンに屈む\n💡 天井に頭をぶつける\n💡 制服のサイズがない\n💡 お客さんに毎回ビビられる"
+      },
+      {
+        category: "😂 あるある",
+        text: "視聴者から\nあるある募集",
+        sub: "「仕事・生活・学校…なんでも来い」",
+        tips: "💡 コメントを読んで「わかる」「わからん（キレ）」\n💡 で返すだけでリズムができる\n💡 テンポよく大量に拾う"
+      }
+    ]
+  },
+  {
+    label: "盛り上げ",
+    time: 300,
+    prompts: [
+      {
+        category: "🔥 盛り上げ",
+        text: "「キレていいこと\n選手権」",
+        sub: "視聴者のキレネタに反応・採点する",
+        tips: "💡 10点満点でキレ度を採点\n💡 「これは8キレ」「これは3キレ」\n💡 コメントが大量に来る"
+      },
+      {
+        category: "🔥 盛り上げ",
+        text: "2択対決\nジェスチャーだけ",
+        sub: "「ラーメン vs 寿司　どっち？」",
+        tips: "💡 喋らずリアクションだけでOK\n💡 コメントで対立が生まれる\n💡 「なんでそっちやねん（キレ）」"
+      }
+    ]
+  },
+  {
+    label: "エンディング",
+    time: 120,
+    prompts: [
+      {
+        category: "👋 エンディング",
+        text: "「また来てくれる人は\nフォローしといて」",
+        sub: "「次いつやるかはフォロワーだけに教える」",
+        tips: "💡 仕事・採用の話は絶対にしない\n💡 次回予告でフォロー動機を作る\n💡 キレたまま終わっても笑いで締めてOK"
+      }
+    ]
+  }
+];
+
+let currentSegment = 0;
+let currentPrompt = 0;
+let timerSeconds = 300;
+let timerRunning = false;
+let timerInterval = null;
+
+function goToSegment(index) {
+  currentSegment = index;
+  currentPrompt = 0;
+  timerSeconds = segments[index].time;
+  if (timerRunning) { clearInterval(timerInterval); timerRunning = false; }
+  document.getElementById('timerStartBtn').classList.remove('active');
+  document.getElementById('timerStartBtn').textContent = '▶ スタート';
+
+  document.querySelectorAll('.seg-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+  });
+
+  updateDisplay();
+  updateTimer();
+}
+
+function updateDisplay() {
+  const seg = segments[currentSegment];
+  const p = seg.prompts[currentPrompt];
+
+  document.getElementById('segLabel').textContent = seg.label;
+  document.getElementById('promptCategory').textContent = p.category;
+  document.getElementById('promptText').textContent = p.text;
+  document.getElementById('promptSub').textContent = p.sub;
+  document.getElementById('promptTips').innerHTML = p.tips.replace(/\n/g, '<br>');
+  document.getElementById('progressInfo').textContent =
+    `${currentPrompt + 1} / ${seg.prompts.length}`;
+
+  // カードアニメーション
+  const card = document.getElementById('promptCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeIn 0.3s ease';
+}
+
+function nextPrompt() {
+  const seg = segments[currentSegment];
+  if (currentPrompt < seg.prompts.length - 1) {
+    currentPrompt++;
+  } else {
+    if (currentSegment < segments.length - 1) {
+      goToSegment(currentSegment + 1);
+      return;
+    }
+  }
+  updateDisplay();
+}
+
+function prevPrompt() {
+  if (currentPrompt > 0) {
+    currentPrompt--;
+    updateDisplay();
+  } else if (currentSegment > 0) {
+    goToSegment(currentSegment - 1);
+    const seg = segments[currentSegment];
+    currentPrompt = seg.prompts.length - 1;
+    updateDisplay();
+  }
+}
+
+function updateTimer() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const display = document.getElementById('timerDisplay');
+  display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  display.className = 'timer-display';
+  if (timerSeconds <= 60) display.classList.add('danger');
+  else if (timerSeconds <= 120) display.classList.add('warning');
+}
+
+function toggleTimer() {
+  const btn = document.getElementById('timerStartBtn');
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    btn.classList.remove('active');
+    btn.textContent = '▶ スタート';
+  } else {
+    timerRunning = true;
+    btn.classList.add('active');
+    btn.textContent = '⏸ 停止';
+    timerInterval = setInterval(() => {
+      if (timerSeconds > 0) {
+        timerSeconds--;
+        updateTimer();
+      } else {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        btn.classList.remove('active');
+        btn.textContent = '▶ スタート';
+        document.getElementById('timerDisplay').style.animation = 'none';
+      }
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = segments[currentSegment].time;
+  document.getElementById('timerStartBtn').classList.remove('active');
+  document.getElementById('timerStartBtn').textContent = '▶ スタート';
+  updateTimer();
+}
+
+function showQuickModal() {
+  document.getElementById('quickModal').classList.add('show');
+}
+
+function closeQuickModal() {
+  document.getElementById('quickModal').classList.remove('show');
+}
+
+function useQuick(text) {
+  document.getElementById('promptText').textContent = text;
+  document.getElementById('promptCategory').textContent = '⚡ 緊急ネタ';
+  document.getElementById('promptSub').textContent = 'アドリブで対応';
+  document.getElementById('promptTips').innerHTML = '💡 自然体でOK<br>💡 コメントを拾いながら進める';
+  closeQuickModal();
+}
+
+// キーボードショートカット
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextPrompt();
+  if (e.key === 'ArrowLeft') prevPrompt();
+  if (e.key === 'Enter') toggleTimer();
+});
+
+// 初期化
+goToSegment(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ネタ発掘ツール</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    min-height: 100vh;
+  }
+
+  .header {
+    padding: 20px 24px 16px;
+    background: #111;
+    border-bottom: 1px solid #1e1e1e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header h1 { font-size: 18px; font-weight: bold; }
+  .header-sub { font-size: 12px; color: #555; margin-top: 4px; }
+  .shoot-count {
+    background: #1a0a00;
+    border: 1px solid #ff6600;
+    color: #ff6600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  /* フォーマット選択 */
+  .format-section {
+    padding: 16px 20px;
+    background: #0d0d0d;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .section-title {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .format-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .format-tabs::-webkit-scrollbar { display: none; }
+  .format-tab {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #666;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .format-tab:hover { color: #aaa; }
+  .format-tab.active {
+    color: #fff;
+    border-color: transparent;
+  }
+  .format-tab[data-format="0"].active { background: #cc3333; }
+  .format-tab[data-format="1"].active { background: #cc6600; }
+  .format-tab[data-format="2"].active { background: #557700; }
+  .format-tab[data-format="3"].active { background: #005588; }
+  .format-tab[data-format="4"].active { background: #660088; }
+
+  /* コントロールバー */
+  .control-bar {
+    display: flex;
+    gap: 10px;
+    padding: 14px 20px;
+    background: #0d0d0d;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .control-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    font-weight: bold;
+  }
+  .control-btn:hover { background: #222; }
+  .control-btn.generate {
+    background: #cc3333;
+    border-color: #cc3333;
+    flex: 2;
+  }
+  .control-btn.generate:hover { background: #dd4444; }
+
+  /* メインコンテンツ */
+  .content {
+    padding: 16px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .ideas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .idea-card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .idea-card:hover { border-color: #333; background: #141414; }
+  .idea-card.added {
+    border-color: #22aa44;
+    background: #0a1a0f;
+  }
+
+  .idea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .idea-format-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+  .idea-difficulty {
+    font-size: 11px;
+    color: #555;
+  }
+  .idea-title {
+    font-size: 17px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .idea-desc {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .idea-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .idea-time {
+    font-size: 12px;
+    color: #555;
+  }
+  .add-btn {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-btn:hover { background: #222; color: #fff; }
+  .add-btn.added-btn {
+    background: #0a2a14;
+    border-color: #22aa44;
+    color: #22aa44;
+  }
+
+  /* 撮影リスト */
+  .list-section {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .list-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #ff6600;
+  }
+  .list-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .list-action-btn {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    color: #888;
+    padding: 5px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .list-action-btn:hover { color: #fff; }
+  .list-action-btn.export {
+    border-color: #ff6600;
+    color: #ff6600;
+  }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #0d0d0d;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+  }
+  .list-item:hover { background: #141414; }
+  .list-num {
+    width: 24px;
+    height: 24px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #555;
+    flex-shrink: 0;
+  }
+  .list-check {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .list-check.done {
+    background: #22aa44;
+    border-color: #22aa44;
+  }
+  .list-text {
+    flex: 1;
+    font-size: 14px;
+    color: #ccc;
+  }
+  .list-text.done { color: #444; text-decoration: line-through; }
+  .list-remove {
+    color: #333;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    transition: color 0.2s;
+  }
+  .list-remove:hover { color: #ff4444; }
+
+  .empty-list {
+    text-align: center;
+    color: #333;
+    font-size: 14px;
+    padding: 24px 0;
+  }
+
+  /* Stitch候補 */
+  .stitch-section {
+    margin-bottom: 24px;
+  }
+  .stitch-title {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .stitch-card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+  .stitch-card:hover { border-color: #333; }
+  .stitch-info { flex: 1; }
+  .stitch-keyword {
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .stitch-platform {
+    font-size: 12px;
+    color: #555;
+  }
+  .stitch-link {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .stitch-link:hover { background: #222; color: #fff; }
+
+  /* 撮影日カウントダウン */
+  .shooting-day-banner {
+    background: linear-gradient(135deg, #1a0a00, #0d0d0d);
+    border: 1px solid #ff6600;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .shooting-day-label { font-size: 12px; color: #ff6600; }
+  .shooting-day-count { font-size: 28px; font-weight: bold; color: #fff; }
+  .shooting-day-sub { font-size: 12px; color: #555; }
+  .shooting-day-input {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    width: 130px;
+  }
+
+  /* 統計バー */
+  .stats-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    flex: 1;
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  /* ローディング */
+  .loading {
+    text-align: center;
+    padding: 40px;
+    color: #444;
+    font-size: 14px;
+  }
+  .loading-dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+  }
+  @keyframes dots {
+    0% { content: ''; }
+    33% { content: '.'; }
+    66% { content: '..'; }
+    100% { content: '...'; }
+  }
+
+  /* トースト通知 */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #22aa44;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🎬 ネタ発掘ツール</h1>
+    <div class="header-sub">撮影日前日に使う・ネタ自動生成</div>
+  </div>
+  <div class="shoot-count" id="shootCountBadge">リスト 0本</div>
+</div>
+
+<div class="format-section">
+  <div class="section-title">フォーマット選択</div>
+  <div class="format-tabs">
+    <button class="format-tab active" data-format="0" onclick="selectFormat(0)">😤 キレ選手権</button>
+    <button class="format-tab" data-format="1" onclick="selectFormat(1)">📋 説明書通りに</button>
+    <button class="format-tab" data-format="2" onclick="selectFormat(2)">👥 Types of people</button>
+    <button class="format-tab" data-format="3" onclick="selectFormat(3)">🪞 ミラー+ダンス</button>
+    <button class="format-tab" data-format="4" onclick="selectFormat(4)">💥 無理難題</button>
+    <button class="format-tab" data-format="5" onclick="selectFormat(5)">🎲 ランダム</button>
+  </div>
+</div>
+
+<div class="control-bar">
+  <button class="control-btn generate" onclick="generateIdeas()">⚡ ネタ生成</button>
+  <button class="control-btn" onclick="addAll()">全追加</button>
+  <button class="control-btn" onclick="scrollToList()">📋 リスト</button>
+</div>
+
+<div class="content">
+
+  <!-- 撮影日カウント -->
+  <div class="shooting-day-banner">
+    <div>
+      <div class="shooting-day-label">📅 次の撮影日まで</div>
+      <div class="shooting-day-count" id="daysCount">-- 日</div>
+      <div class="shooting-day-sub" id="daysLabel">日付を設定してください</div>
+    </div>
+    <input type="date" class="shooting-day-input" id="shootingDate" onchange="calcDays()" />
+  </div>
+
+  <!-- 統計 -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">生成ネタ数</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statList">0</div>
+      <div class="stat-label">撮影リスト</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statDone">0</div>
+      <div class="stat-label">撮影済み</div>
+    </div>
+  </div>
+
+  <!-- ネタ一覧 -->
+  <div id="ideasContainer">
+    <div class="loading">フォーマットを選んで「ネタ生成」を押してください</div>
+  </div>
+
+  <!-- Stitch候補 -->
+  <div class="stitch-section" id="stitchSection" style="display:none">
+    <div class="stitch-title">🔗 Stitch 候補キーワード</div>
+    <div id="stitchContainer"></div>
+  </div>
+
+  <!-- 撮影リスト -->
+  <div class="list-section" id="shootingListSection">
+    <div class="list-header">
+      <div class="list-title">📋 撮影リスト</div>
+      <div class="list-actions">
+        <button class="list-action-btn" onclick="clearList()">クリア</button>
+        <button class="list-action-btn export" onclick="exportList()">コピー</button>
+      </div>
+    </div>
+    <div id="shootingList">
+      <div class="empty-list">ネタを追加すると撮影リストになります</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== データ =====
+const formats = [
+  {
+    name: "キレ選手権",
+    color: "#cc3333",
+    ideas: [
+      { title: "電車でリュックそのままの人", desc: "「キレていいですか？」シリーズ第1弾\nリュックを背負ったまま電車に乗る人へのリアクション", time: "15-20秒", diff: "簡単" },
+      { title: "コンビニで小銭を全部数える人", desc: "「これはキレていい」シリーズ\nレジでゆっくり小銭を数える状況を再現してキレる", time: "20秒", diff: "簡単" },
+      { title: "返信が3日後の人", desc: "LINEの既読無視→3日後に「了解」だけ送ってくる状況\n身体表現でキレを表現", time: "15秒", diff: "簡単" },
+      { title: "信号無視の自転車", desc: "「世の中でキレていいこと選手権」\n自転車の信号無視にキレるリアクション", time: "15秒", diff: "簡単" },
+      { title: "横断歩道でスマホの人", desc: "歩きスマホで横断歩道をゆっくり渡る人の再現\nキレながら待つ", time: "20秒", diff: "簡単" },
+      { title: "視聴者からキレネタ募集", desc: "「今週一番キレたこと送って」テキスト表示\nコメントを読んでジェスチャーで反応", time: "30秒", diff: "簡単" },
+      { title: "エレベーターのボタン全押し", desc: "全フロアのボタンを押してくる状況のリアクション\n怒りを表情（仮面）と体で表現", time: "20秒", diff: "簡単" },
+      { title: "Khaby型・複雑な開け方動画Stitch", desc: "複雑なライフハックに「普通にやれ」\n元動画をStitchして簡単な方法をやって見せる", time: "20秒", diff: "中" },
+      { title: "「キレ度採点」シリーズ", desc: "様々なシチュエーションを10点満点で採点\n「これは8キレ」「これは2キレ」をジェスチャーで", time: "30秒", diff: "中" },
+      { title: "仕事中のキレエピソード", desc: "実際の配送中に起きた理不尽をリアクションのみで語る\n具体的な状況ほど共感を得やすい", time: "30秒", diff: "中" },
+    ],
+    stitch: [
+      { keyword: "life hack fail", platform: "TikTok", url: "https://www.tiktok.com/search?q=life+hack+fail" },
+      { keyword: "複雑な開け方", platform: "TikTok", url: "https://www.tiktok.com/search?q=複雑+開け方" },
+      { keyword: "overly complicated", platform: "TikTok", url: "https://www.tiktok.com/search?q=overly+complicated" },
+    ]
+  },
+  {
+    name: "説明書通りに",
+    color: "#cc6600",
+    ideas: [
+      { title: "IKEAの家具を説明書通りに組み立てる", desc: "一字一句守って組み立てようとして崩壊\n「一番大きいネジから始めてください」を真剣に", time: "45-60秒", diff: "中" },
+      { title: "カップラーメンの説明書完全遵守", desc: "「熱湯を注いで3分待つ」を0.1秒も誤差なく守ろうとする\nストップウォッチで計測してキレる", time: "30秒", diff: "簡単" },
+      { title: "シャンプーの説明書通りに洗う", desc: "「適量を手に取り泡立てて…」を全文読みながら実行\n所要時間が30分になってキレる", time: "30秒", diff: "簡単" },
+      { title: "消火器の使用説明書を全部読んでから使う", desc: "緊急時なのに説明書を全文読む\nその間に状況が変わってキレる", time: "30秒", diff: "中" },
+      { title: "薬の副作用を全部読んでから飲む", desc: "「まれに〇〇が起きる場合があります」を全部読む\n怖くなってキレる", time: "30秒", diff: "簡単" },
+      { title: "避難訓練マニュアル通りに動く", desc: "「まず落ち着いて周囲を確認し…」を日常で実行\n日常的なシチュエーションに設定", time: "45秒", diff: "中" },
+      { title: "荷物の梱包説明書を完全遵守", desc: "「テープは5cm間隔で貼る」を定規で測りながら\n1個梱包に30分かかってキレる", time: "30秒", diff: "簡単" },
+      { title: "電子レンジの取説通りに調理", desc: "取扱説明書の「解凍モード」から始めて全手順を踏む\n冷凍ご飯を温めるのに20分かかる", time: "45秒", diff: "簡単" },
+      { title: "スマホのセットアップを説明書通りに", desc: "「まずSIMカードを挿入してください」から全手順\n「ご使用の前に必ずお読みください」を本当に読む", time: "45秒", diff: "中" },
+      { title: "ダンボールの組み立て説明書を読む", desc: "「図1を参照してください」の図1がわかりにくすぎる\nキレながらも真剣に従おうとする", time: "30秒", diff: "簡単" },
+    ],
+    stitch: [
+      { keyword: "説明書 通り", platform: "TikTok", url: "https://www.tiktok.com/search?q=説明書+通り" },
+      { keyword: "follow instructions literally", platform: "TikTok", url: "https://www.tiktok.com/search?q=follow+instructions+literally" },
+    ]
+  },
+  {
+    name: "Types of people",
+    color: "#557700",
+    ideas: [
+      { title: "月曜日の朝の人間の種類", desc: "①余裕な人②ギリギリな人③俺（仮面で倒れてキレる）\nオフィス・家の朝のシーン", time: "30-45秒", diff: "簡単" },
+      { title: "渋滞にハマった時の人間の種類", desc: "①音楽聴いてる人②イライラする人③俺（クラクション連打してキレる）\n車内でリアクション", time: "30秒", diff: "簡単" },
+      { title: "重い荷物を持たされた時の種類", desc: "①黙って運ぶ人②愚痴る人③俺（限界の表情でキレる）\n実際の配送シーンを使える", time: "30秒", diff: "簡単" },
+      { title: "LINEの返信が遅い時の種類", desc: "①気にしない人②不安になる人③俺（既読つけてほったらかしてキレる）\n表情とスマホで表現", time: "30秒", diff: "簡単" },
+      { title: "コンビニのレジに並ぶ時の種類", desc: "①余裕な人②急ぐ人③俺（前の人のモタモタにキレる）\nコンビニか家で撮れる", time: "30秒", diff: "簡単" },
+      { title: "雨の日の種類", desc: "①傘さして平和な人②走る人③俺（仮面が濡れてキレる）\n屋外で撮ると映える", time: "30秒", diff: "中" },
+      { title: "朝5時に起きる時の種類", desc: "①すっきり起きる人②なんとか起きる人③俺（仮面のまま倒れてキレる）\n布団シーン", time: "30秒", diff: "簡単" },
+      { title: "仕事終わりの種類", desc: "①元気な人②疲弊してる人③俺（仮面つけたままベッドに倒れる）\nリアルな疲れ表現", time: "30秒", diff: "簡単" },
+      { title: "電車で席に座る時の種類", desc: "①普通に座る人②急いで座る人③俺（身長193cmで足が出すぎてキレる）\n身長ネタを組み込む", time: "30秒", diff: "中" },
+      { title: "暑い日の種類", desc: "①平気な人②扇子使う人③俺（でかい体積分が暑いとキレる）\n夏に特に刺さる", time: "30秒", diff: "簡単" },
+    ],
+    stitch: [
+      { keyword: "types of people", platform: "TikTok", url: "https://www.tiktok.com/search?q=types+of+people" },
+      { keyword: "あるある 種類", platform: "TikTok", url: "https://www.tiktok.com/search?q=あるある+種類" },
+    ]
+  },
+  {
+    name: "ミラー+ダンス",
+    color: "#005588",
+    ideas: [
+      { title: "Khaby Lameの動きを完コピ", desc: "世界1位のリアクションを仮面キレキャラがやる\n元動画のファンが流れてくる", time: "30秒", diff: "簡単" },
+      { title: "K-POPアイドルの振り付けを完コピ", desc: "優雅なダンスを仮面のまま大真面目にやる\n完璧に再現しようとして途中でキレる", time: "30-45秒", diff: "中" },
+      { title: "子供向けダンスを完全に真剣にやる", desc: "「えびかにクス」「パプリカ」等を超真剣にやる\nギャップが笑いになる", time: "30秒", diff: "簡単" },
+      { title: "TikTokバズりダンスを3回チャレンジ", desc: "1回目失敗→キレ→2回目失敗→キレ→3回目少し合う→ドヤ\nリピートで見たくなる構成", time: "45秒", diff: "中" },
+      { title: "海外バイラルダンスの動きをStitch", desc: "億再生の海外ダンス動画をStitchして完コピ挑戦\n失敗してキレるがオチ", time: "30秒", diff: "中" },
+      { title: "スローモーションで踊る", desc: "速いダンスをスローで完璧にやろうとして\n普通速度にするとぐちゃぐちゃ→キレ", time: "30秒", diff: "簡単" },
+      { title: "仮面つけたまま鏡の前でダンス", desc: "ミラー越しに自分の踊りを確認→愕然→キレ\n仮面が揺れる様子がコンテンツ", time: "20秒", diff: "簡単" },
+      { title: "チームメンバーと振り付けをシンクロ", desc: "平均年齢25歳チームでシンクロダンスに挑戦\n揃わなくてキレる", time: "45秒", diff: "中" },
+    ],
+    stitch: [
+      { keyword: "viral dance 2026", platform: "TikTok", url: "https://www.tiktok.com/search?q=viral+dance+2026" },
+      { keyword: "dance challenge 億再生", platform: "TikTok", url: "https://www.tiktok.com/search?q=dance+challenge" },
+      { keyword: "copy this dance", platform: "TikTok", url: "https://www.tiktok.com/search?q=copy+this+dance" },
+    ]
+  },
+  {
+    name: "無理難題",
+    color: "#660088",
+    ideas: [
+      { title: "10秒で着替えられるか", desc: "タイマー表示で緊張感MAX\nTシャツ1枚も10秒では無理→キレ", time: "30秒", diff: "簡単" },
+      { title: "仮面つけたまま飯食えるか", desc: "「無理だろ」とわかってるのに大真面目に挑戦\n食べようとするシュールな絵がコンテンツ", time: "30秒", diff: "簡単" },
+      { title: "1分で部屋を完璧に片付けられるか", desc: "タイマー1分でぐちゃぐちゃの部屋を片付けに挑戦\n全然終わらなくてキレる", time: "45秒", diff: "中" },
+      { title: "目隠しして好きな食べ物を当てられるか", desc: "仮面+目隠し=二重のブラインド状態\nシュールな見た目がウケる", time: "30秒", diff: "簡単" },
+      { title: "30秒で腕立て50回できるか", desc: "タイムチャレンジ形式\nできそうでできない設定がポイント", time: "45秒", diff: "簡単" },
+      { title: "仮面のまま電話できるか", desc: "マスクで声が変わる・聞こえないを実験\nシュールな状況がコンテンツ", time: "30秒", diff: "簡単" },
+      { title: "5秒で靴ひもを結べるか", desc: "カウントダウンで緊張感\n5秒は絶対無理なのに挑戦してキレる", time: "20秒", diff: "簡単" },
+      { title: "炎天下で5分間動かずにいられるか", desc: "過酷系の入口として最適\n仮面が蒸れる・汗が出る→キレ", time: "45秒", diff: "中" },
+      { title: "1時間で宅建の問題を解けるか", desc: "「普通無理だろ」系のチャレンジ\n真剣に取り組んで玉砕→キレ", time: "60秒", diff: "中" },
+      { title: "チームメンバーと同時に同じ動きをする", desc: "ミラーチャレンジのグループ版\n全員でシンクロしようとして全員バラバラ→全員キレ", time: "45秒", diff: "中" },
+    ],
+    stitch: [
+      { keyword: "#impossiblechallenge", platform: "TikTok", url: "https://www.tiktok.com/tag/impossiblechallenge" },
+      { keyword: "timer challenge fail", platform: "TikTok", url: "https://www.tiktok.com/search?q=timer+challenge+fail" },
+    ]
+  }
+];
+
+let currentFormat = 0;
+let shootingList = JSON.parse(localStorage.getItem('shootingList') || '[]');
+let generatedIdeas = [];
+
+function selectFormat(index) {
+  currentFormat = index;
+  document.querySelectorAll('.format-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
+  });
+  document.getElementById('ideasContainer').innerHTML =
+    '<div class="loading">「ネタ生成」を押してください</div>';
+  document.getElementById('stitchSection').style.display = 'none';
+}
+
+function generateIdeas() {
+  const formatIndex = currentFormat === 5
+    ? Math.floor(Math.random() * 5)
+    : currentFormat;
+
+  const format = formats[formatIndex];
+  const shuffled = [...format.ideas].sort(() => Math.random() - 0.5);
+  generatedIdeas = shuffled.slice(0, 6);
+
+  // アイデア表示
+  const container = document.getElementById('ideasContainer');
+  container.innerHTML = '<div class="ideas-grid" id="ideasGrid"></div>';
+  const grid = document.getElementById('ideasGrid');
+
+  generatedIdeas.forEach((idea, i) => {
+    const inList = shootingList.some(item => item.title === idea.title);
+    const card = document.createElement('div');
+    card.className = `idea-card${inList ? ' added' : ''}`;
+    card.id = `idea-${i}`;
+    card.innerHTML = `
+      <div class="idea-header">
+        <span class="idea-format-badge" style="background:${format.color}22; color:${format.color}; border:1px solid ${format.color}44">
+          ${format.name}
+        </span>
+        <span class="idea-difficulty">${idea.diff} · ${idea.time}</span>
+      </div>
+      <div class="idea-title">${idea.title}</div>
+      <div class="idea-desc">${idea.desc.replace(/\n/g, '<br>')}</div>
+      <div class="idea-footer">
+        <span class="idea-time"></span>
+        <button class="add-btn ${inList ? 'added-btn' : ''}" id="addbtn-${i}"
+          onclick="toggleAdd(${i}, '${idea.title.replace(/'/g, "\\'")}')">
+          ${inList ? '✓ 追加済み' : '+ リストに追加'}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // Stitch候補
+  const stitchSection = document.getElementById('stitchSection');
+  const stitchContainer = document.getElementById('stitchContainer');
+  stitchSection.style.display = 'block';
+  stitchContainer.innerHTML = format.stitch.map(s => `
+    <div class="stitch-card">
+      <div class="stitch-info">
+        <div class="stitch-keyword">${s.keyword}</div>
+        <div class="stitch-platform">${s.platform}</div>
+      </div>
+      <a class="stitch-link" href="${s.url}" target="_blank">検索 →</a>
+    </div>
+  `).join('');
+
+  updateStats();
+  showToast(`${generatedIdeas.length}本のネタを生成しました`);
+}
+
+function toggleAdd(index, title) {
+  const idea = generatedIdeas[index];
+  const existingIndex = shootingList.findIndex(item => item.title === title);
+
+  if (existingIndex >= 0) {
+    shootingList.splice(existingIndex, 1);
+    document.getElementById(`idea-${index}`).classList.remove('added');
+    document.getElementById(`addbtn-${index}`).textContent = '+ リストに追加';
+    document.getElementById(`addbtn-${index}`).classList.remove('added-btn');
+    showToast('リストから削除しました');
+  } else {
+    shootingList.push({ title, done: false });
+    document.getElementById(`idea-${index}`).classList.add('added');
+    document.getElementById(`addbtn-${index}`).textContent = '✓ 追加済み';
+    document.getElementById(`addbtn-${index}`).classList.add('added-btn');
+    showToast('リストに追加しました');
+  }
+
+  saveList();
+  renderList();
+  updateStats();
+}
+
+function addAll() {
+  generatedIdeas.forEach((idea, i) => {
+    if (!shootingList.some(item => item.title === idea.title)) {
+      shootingList.push({ title: idea.title, done: false });
+      const addbtn = document.getElementById(`addbtn-${i}`);
+      const card = document.getElementById(`idea-${i}`);
+      if (addbtn) {
+        addbtn.textContent = '✓ 追加済み';
+        addbtn.classList.add('added-btn');
+      }
+      if (card) card.classList.add('added');
+    }
+  });
+  saveList();
+  renderList();
+  updateStats();
+  showToast('全てリストに追加しました');
+}
+
+function renderList() {
+  const container = document.getElementById('shootingList');
+  document.getElementById('shootCountBadge').textContent = `リスト ${shootingList.length}本`;
+
+  if (shootingList.length === 0) {
+    container.innerHTML = '<div class="empty-list">ネタを追加すると撮影リストになります</div>';
+    return;
+  }
+
+  container.innerHTML = shootingList.map((item, i) => `
+    <div class="list-item">
+      <div class="list-num">${i + 1}</div>
+      <div class="list-check ${item.done ? 'done' : ''}" onclick="toggleDone(${i})">
+        ${item.done ? '✓' : ''}
+      </div>
+      <div class="list-text ${item.done ? 'done' : ''}">${item.title}</div>
+      <div class="list-remove" onclick="removeItem(${i})">×</div>
+    </div>
+  `).join('');
+}
+
+function toggleDone(index) {
+  shootingList[index].done = !shootingList[index].done;
+  saveList();
+  renderList();
+  updateStats();
+}
+
+function removeItem(index) {
+  shootingList.splice(index, 1);
+  saveList();
+  renderList();
+  updateStats();
+}
+
+function clearList() {
+  if (confirm('撮影リストを全てクリアしますか？')) {
+    shootingList = [];
+    saveList();
+    renderList();
+    updateStats();
+  }
+}
+
+function exportList() {
+  if (shootingList.length === 0) { showToast('リストが空です'); return; }
+  const text = `📋 撮影リスト（${new Date().toLocaleDateString('ja-JP')}）\n\n` +
+    shootingList.map((item, i) =>
+      `${i + 1}. ${item.done ? '✅' : '⬜'} ${item.title}`
+    ).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('クリップボードにコピーしました');
+  });
+}
+
+function scrollToList() {
+  document.getElementById('shootingListSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveList() {
+  localStorage.setItem('shootingList', JSON.stringify(shootingList));
+}
+
+function calcDays() {
+  const input = document.getElementById('shootingDate').value;
+  if (!input) return;
+  const target = new Date(input);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+  document.getElementById('daysCount').textContent = diff > 0 ? `${diff} 日` : '今日！';
+  document.getElementById('daysLabel').textContent = input.replace(/-/g, '/') + ' 撮影';
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = generatedIdeas.length;
+  document.getElementById('statList').textContent = shootingList.length;
+  document.getElementById('statDone').textContent = shootingList.filter(i => i.done).length;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// 初期化
+renderList();
+updateStats();
+</script>
+</body>
+</html>
