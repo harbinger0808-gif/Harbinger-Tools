@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harbinger Tools</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: #fff; font-family: 'Hiragino Sans', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 24px; padding: 20px; }
+  h1 { font-size: 24px; color: #fff; }
+  .subtitle { color: #555; font-size: 14px; }
+  .cards { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .card { background: #111; border: 1px solid #222; border-radius: 16px; padding: 28px 32px; text-align: center; text-decoration: none; color: #fff; transition: all 0.2s; width: 200px; }
+  .card:hover { border-color: #ff4444; background: #1a0000; transform: translateY(-2px); }
+  .card-icon { font-size: 40px; margin-bottom: 12px; }
+  .card-title { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+  .card-sub { font-size: 12px; color: #555; }
+</style>
+</head>
+<body>
+  <h1>🎭 Harbinger Tools</h1>
+  <div class="subtitle">ツールを選んでください</div>
+  <div class="cards">
+    <a class="card" href="live-prompter.html">
+      <div class="card-icon">🎙</div>
+      <div class="card-title">ライブ<br>プロンプター</div>
+      <div class="card-sub">ライブ配信中に使う</div>
+    </a>
+    <a class="card" href="neta-finder.html">
+      <div class="card-icon">🎬</div>
+      <div class="card-title">ネタ発掘<br>ツール</div>
+      <div class="card-sub">撮影前日に使う</div>
+    </a>
+  </div>
+</body>
+</html>
