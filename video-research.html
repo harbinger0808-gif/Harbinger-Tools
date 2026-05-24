@@ -6,124 +6,146 @@
 <title>元動画リサーチ — Harbinger</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #0a0a0a; color: #fff; font-family: 'Hiragino Sans', sans-serif; padding: 20px; max-width: 700px; margin: 0 auto; }
+  body { background: #0a0a0a; color: #fff; font-family: 'Hiragino Sans', sans-serif; padding: 20px; max-width: 720px; margin: 0 auto; }
 
   h1 { font-size: 20px; margin-bottom: 4px; }
   .sub { color: #555; font-size: 13px; margin-bottom: 28px; }
 
-  .section { margin-bottom: 28px; }
-  .section-title { font-size: 12px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .section { margin-bottom: 32px; }
+  .sec-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .sec-num { background: #ff4444; color: #fff; font-size: 12px; font-weight: bold; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sec-title { font-size: 14px; font-weight: bold; }
+  .sec-sub { font-size: 12px; color: #555; margin-left: auto; }
 
-  .input-row { display: flex; gap: 8px; }
+  .box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 20px; }
+
   input[type="text"], textarea {
-    background: #111; border: 1px solid #222; border-radius: 10px;
+    background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 10px;
     color: #fff; font-size: 15px; padding: 12px 14px; width: 100%;
     outline: none; transition: border-color 0.2s; font-family: inherit;
   }
   input[type="text"]:focus, textarea:focus { border-color: #ff4444; }
   textarea { resize: vertical; min-height: 60px; }
 
-  .btn { border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; padding: 12px 20px; transition: all 0.15s; white-space: nowrap; }
-  .btn-red   { background: #ff4444; color: #fff; }
+  .btn { border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; padding: 11px 18px; transition: all 0.15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-red    { background: #ff4444; color: #fff; }
   .btn-red:hover { background: #ff2222; }
-  .btn-gray  { background: #1e1e1e; color: #aaa; border: 1px solid #333; }
-  .btn-gray:hover { background: #2a2a2a; color: #fff; }
-  .btn-green { background: #22c55e; color: #fff; }
+  .btn-gray   { background: #1a1a1a; color: #aaa; border: 1px solid #2a2a2a; }
+  .btn-gray:hover { background: #242424; color: #fff; }
+  .btn-green  { background: #22c55e; color: #fff; }
   .btn-green:hover { background: #16a34a; }
-  .btn-blue  { background: #3b82f6; color: #fff; }
+  .btn-blue   { background: #3b82f6; color: #fff; }
   .btn-blue:hover { background: #2563eb; }
+  .btn-purple { background: #8b5cf6; color: #fff; }
+  .btn-purple:hover { background: #7c3aed; }
   .btn-yellow { background: #f59e0b; color: #000; }
   .btn-yellow:hover { background: #d97706; }
-  .btn-sm { font-size: 12px; padding: 6px 12px; border-radius: 7px; }
-  .btn-full { width: 100%; }
-
-  .box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 20px; }
+  .btn-sm { font-size: 12px; padding: 7px 13px; border-radius: 8px; }
+  .btn-full { width: 100%; justify-content: center; }
 
   /* ローディング */
-  #loading { display: none; text-align: center; padding: 20px; color: #555; font-size: 14px; }
+  #loading { display: none; text-align: center; padding: 18px; color: #555; font-size: 14px; }
   .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #333; border-top-color: #ff4444; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   /* 結果 */
-  #result { display: none; margin-top: 16px; }
-
-  .result-found { background: #0a1a0a; border: 1px solid #22c55e; border-radius: 12px; padding: 16px; }
-  .result-manual { background: #141408; border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; }
-
-  .badge-green { font-size: 12px; font-weight: bold; color: #22c55e; margin-bottom: 10px; }
-  .badge-yellow { font-size: 12px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; }
-
-  .rl { font-size: 11px; color: #666; margin-bottom: 3px; margin-top: 10px; }
-  .rv { font-size: 15px; font-weight: bold; word-break: break-all; }
-  .rt { font-size: 13px; color: #aaa; margin-top: 4px; }
-
+  #result { display: none; margin-top: 14px; }
+  .r-found  { background: #0a180a; border: 1px solid #22c55e; border-radius: 12px; padding: 16px; }
+  .r-manual { background: #18140a; border: 1px solid #f59e0b; border-radius: 12px; padding: 16px; }
+  .badge-g { font-size: 12px; font-weight: bold; color: #22c55e; margin-bottom: 10px; }
+  .badge-y { font-size: 12px; font-weight: bold; color: #f59e0b; margin-bottom: 10px; }
+  .rl { font-size: 11px; color: #555; margin-top: 10px; margin-bottom: 2px; }
+  .rv { font-size: 14px; font-weight: bold; word-break: break-all; }
+  .rt { font-size: 13px; color: #aaa; }
   .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-
-  /* 手動入力パネル */
-  .manual-panel { margin-top: 14px; }
-  .manual-hint { font-size: 13px; color: #aaa; margin-bottom: 10px; line-height: 1.6; }
+  .manual-hint { font-size: 13px; color: #bbb; line-height: 1.7; margin: 12px 0 10px; }
   .manual-hint b { color: #f59e0b; }
   .handle-row { display: flex; gap: 8px; align-items: center; }
-  .handle-prefix { color: #888; font-size: 15px; padding-left: 4px; white-space: nowrap; }
+  .at-prefix { color: #666; font-size: 15px; padding-left: 2px; }
+  #handleResult { margin-top: 10px; }
 
-  /* 登録フォーム */
+  /* ② Google Lens */
+  .lens-flow { display: flex; flex-direction: column; gap: 12px; }
+  .lens-steps { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 4px; }
+  .step-num { background: #2a2a2a; color: #aaa; font-size: 12px; font-weight: bold; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 13px; color: #bbb; line-height: 1.5; }
+  .step-text b { color: #fff; }
+  .lens-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ③ 素材を探す */
+  .search-cats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .cat-btn { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .cat-btn:hover, .cat-btn.active { border-color: #ff4444; color: #ff4444; background: #1f0a0a; }
+  .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 480px) { .search-grid { grid-template-columns: 1fr; } }
+  .search-item { background: #141414; border: 1px solid #222; border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.15s; }
+  .search-item:hover { border-color: #444; background: #1a1a1a; }
+  .search-item-label { font-size: 12px; color: #ff4444; margin-bottom: 4px; font-weight: bold; }
+  .search-item-kw { font-size: 13px; color: #ddd; }
+  .search-item-sub { font-size: 11px; color: #555; margin-top: 3px; }
+  .custom-search { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* ④ 登録フォーム */
   .form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  label.fl { font-size: 12px; color: #888; }
-
-  .checks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .cp { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
-  .cp.active { background: #1a2a1a; border-color: #22c55e; color: #22c55e; }
-
+  .fl { font-size: 12px; color: #666; }
   .fmts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .fmt { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .fmt { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
   .fmt:hover { border-color: #ff4444; }
-  .fmt.selected { background: #2a0000; border-color: #ff4444; color: #ff4444; }
+  .fmt.selected { background: #1f0a0a; border-color: #ff4444; color: #ff4444; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .cp { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; user-select: none; transition: all 0.15s; }
+  .cp.active { background: #0a180a; border-color: #22c55e; color: #22c55e; }
 
-  /* リスト */
+  /* ⑤ リスト */
   #list { display: flex; flex-direction: column; gap: 12px; }
   .card { background: #111; border: 1px solid #222; border-radius: 14px; padding: 16px; }
   .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
   .card-title { font-size: 15px; font-weight: bold; }
   .card-score { font-size: 13px; color: #22c55e; font-weight: bold; }
-  .card-url { font-size: 12px; color: #555; margin-bottom: 6px; word-break: break-all; }
+  .card-url { font-size: 12px; color: #444; margin-bottom: 6px; word-break: break-all; }
   .card-url a { color: #4499ff; text-decoration: none; }
   .card-url a:hover { text-decoration: underline; }
   .card-note { font-size: 13px; color: #aaa; margin-bottom: 8px; }
   .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag { font-size: 11px; background: #1a2a1a; border: 1px solid #22c55e; color: #22c55e; border-radius: 12px; padding: 3px 10px; }
-  .tag.ft { background: #2a0000; border-color: #ff4444; color: #ff4444; }
+  .tag { font-size: 11px; background: #0a180a; border: 1px solid #22c55e; color: #22c55e; border-radius: 12px; padding: 3px 10px; }
+  .tag.ft { background: #1f0a0a; border-color: #ff4444; color: #ff4444; }
   .card-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 
   .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-  .fp { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
-  .fp:hover { border-color: #888; }
-  .fp.active { background: #2a0000; border-color: #ff4444; color: #ff4444; }
+  .fp { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
+  .fp.active { background: #1f0a0a; border-color: #ff4444; color: #ff4444; }
 
-  .empty { text-align: center; color: #444; padding: 40px 0; font-size: 14px; }
-  hr { border: none; border-top: 1px solid #1a1a1a; margin: 28px 0; }
-
-  #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: bold; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; z-index: 999; max-width: 280px; }
-  #toast.show { opacity: 1; transform: translateY(0); }
-
-  .stats { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .stats { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .stat { background: #111; border: 1px solid #222; border-radius: 10px; padding: 12px 18px; text-align: center; flex: 1; min-width: 80px; }
   .stat-n { font-size: 22px; font-weight: bold; color: #ff4444; }
   .stat-l { font-size: 11px; color: #555; margin-top: 2px; }
 
-  .autofill { display: inline-block; font-size: 12px; color: #22c55e; border: 1px solid #22c55e; border-radius: 8px; padding: 5px 12px; cursor: pointer; margin-top: 10px; background: #0a1a0a; }
-  .autofill:hover { background: #1a2a1a; }
+  .empty { text-align: center; color: #444; padding: 40px 0; font-size: 14px; }
+  hr { border: none; border-top: 1px solid #181818; margin: 28px 0; }
+
+  .autofill { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #22c55e; border: 1px solid #22c55e; border-radius: 8px; padding: 5px 12px; cursor: pointer; margin-top: 10px; background: #0a180a; }
+  .autofill:hover { background: #122212; }
+
+  #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: bold; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; z-index: 999; max-width: 300px; }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  .divider { font-size: 11px; color: #333; text-align: center; margin: 8px 0; }
 </style>
 </head>
 <body>
 
 <h1>🔍 元動画リサーチ</h1>
-<p class="sub">Stitch動画から元投稿者を特定 → 管理 → スプシ出力</p>
+<p class="sub">Stitch動画から元投稿者を特定 / 素材を探す / リスト管理</p>
 
-<!-- ① 解析 -->
+<!-- ① Stitch自動解析 -->
 <div class="section">
-  <div class="section-title">① Reaction/Stitch動画のURLを貼る</div>
+  <div class="sec-head">
+    <div class="sec-num">1</div>
+    <div class="sec-title">Stitch動画から元投稿者を自動検出</div>
+    <div class="sec-sub">公式Stitch使用動画のみ</div>
+  </div>
   <div class="box">
-    <div class="input-row">
+    <div style="display:flex;gap:8px;">
       <input type="text" id="stitchUrl" placeholder="https://vt.tiktok.com/... または /video/..." />
       <button class="btn btn-red" onclick="analyzeStitch()">解析</button>
     </div>
@@ -132,22 +154,86 @@
   </div>
 </div>
 
-<!-- ② 登録フォーム -->
+<!-- ② Googleレンズで探す -->
 <div class="section">
-  <div class="section-title">② 元動画をリストに登録</div>
-  <div class="box">
+  <div class="sec-head">
+    <div class="sec-num">2</div>
+    <div class="sec-title">Googleレンズで元動画を探す</div>
+    <div class="sec-sub">手動編集動画に有効</div>
+  </div>
+  <div class="box lens-flow">
+    <div>
+      <div class="lens-steps">
+        <div class="step-num">①</div>
+        <div class="step-text">動画を開いて冒頭（他人の動画が映る場面）で<b>一時停止</b></div>
+      </div>
+      <div class="lens-steps">
+        <div class="step-num">②</div>
+        <div class="step-text"><b>スクリーンショット</b>を撮る（Mac: ⌘+Shift+4）</div>
+      </div>
+      <div class="lens-steps">
+        <div class="step-num">③</div>
+        <div class="step-text">Google Lensを開いてスクショを<b>貼り付け</b> → 元動画が見つかる</div>
+      </div>
+    </div>
+    <div class="lens-btns">
+      <button class="btn btn-purple" onclick="openLens()">🔍 Google Lensを開く</button>
+      <button class="btn btn-gray" onclick="openVideo()">▶️ 元動画URLを開く</button>
+    </div>
+    <div style="margin-top:4px;">
+      <input type="text" id="lensVideoUrl" placeholder="動画URLを入れてから「元動画URLを開く」" style="font-size:13px;" />
+    </div>
+  </div>
+</div>
 
-    <div class="form-row">
-      <label class="fl">元動画 URL</label>
-      <input type="text" id="srcUrl" placeholder="https://www.tiktok.com/@..." />
+<!-- ③ 素材を直接探す -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-num">3</div>
+    <div class="sec-title">Reaction素材を直接探す</div>
+    <div class="sec-sub">Stitch候補を発掘</div>
+  </div>
+  <div class="box">
+    <!-- カテゴリ -->
+    <div class="search-cats" id="cats">
+      <div class="cat-btn active" onclick="setCat(this,'lifehack')">💡 ライフハック</div>
+      <div class="cat-btn" onclick="setCat(this,'cooking')">🍳 料理・食</div>
+      <div class="cat-btn" onclick="setCat(this,'diy')">🔨 DIY・修理</div>
+      <div class="cat-btn" onclick="setCat(this,'cleaning')">🧹 掃除・片付け</div>
+      <div class="cat-btn" onclick="setCat(this,'beauty')">💄 美容・ファッション</div>
     </div>
 
+    <!-- 検索ボタングリッド -->
+    <div class="search-grid" id="searchGrid"></div>
+
+    <!-- カスタム検索 -->
+    <div class="divider">— または自分でキーワード入力 —</div>
+    <div class="custom-search">
+      <input type="text" id="customKw" placeholder="キーワードを入力（例：すごい包丁さばき）" onkeydown="if(event.key==='Enter')customSearch()" />
+      <button class="btn btn-red btn-sm" onclick="customSearch()">TikTok</button>
+      <button class="btn btn-gray btn-sm" onclick="customSearchYT()">YouTube</button>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ④ 登録フォーム -->
+<div class="section">
+  <div class="sec-head">
+    <div class="sec-num">4</div>
+    <div class="sec-title">見つけた元動画を登録</div>
+  </div>
+  <div class="box">
+    <div class="form-row">
+      <label class="fl">元動画 URL（Stitch 対象）</label>
+      <input type="text" id="srcUrl" placeholder="https://www.tiktok.com/@..." />
+    </div>
     <div class="form-row">
       <label class="fl">メモ（内容・ラブの反応案）</label>
       <textarea id="memo" placeholder="例）大げさな料理手順→ラブがシンプルにやってドヤ顔"></textarea>
     </div>
-
-    <div class="section-title" style="margin-bottom:8px;">フォーマット</div>
+    <div class="fl" style="margin-bottom:8px;">フォーマット</div>
     <div class="fmts">
       <div class="fmt" onclick="selectFmt(this,'キレ反応')">😤 キレ反応</div>
       <div class="fmt" onclick="selectFmt(this,'無言ドヤ')">😐 無言ドヤ</div>
@@ -155,8 +241,7 @@
       <div class="fmt" onclick="selectFmt(this,'逆張り実証')">✅ 逆張り実証</div>
       <div class="fmt" onclick="selectFmt(this,'その他')">📌 その他</div>
     </div>
-
-    <div class="section-title" style="margin-bottom:8px;">再現可能チェック</div>
+    <div class="fl" style="margin-bottom:8px;">再現可能チェック</div>
     <div class="checks">
       <div class="cp" onclick="this.classList.toggle('active')" data-val="予算ゼロ">💰 予算ゼロ</div>
       <div class="cp" onclick="this.classList.toggle('active')" data-val="編集不要">✂️ 編集不要</div>
@@ -165,16 +250,18 @@
       <div class="cp" onclick="this.classList.toggle('active')" data-val="屋内OK">🏠 屋内OK</div>
       <div class="cp" onclick="this.classList.toggle('active')" data-val="5分以内">⏱ 5分以内</div>
     </div>
-
     <button class="btn btn-green btn-full" onclick="addVideo()">＋ リストに追加</button>
   </div>
 </div>
 
 <hr>
 
-<!-- ③ リスト -->
+<!-- ⑤ リスト -->
 <div class="section">
-  <div class="section-title">③ 元動画リスト</div>
+  <div class="sec-head">
+    <div class="sec-num">5</div>
+    <div class="sec-title">元動画リスト</div>
+  </div>
   <div class="stats">
     <div class="stat"><div class="stat-n" id="statTotal">0</div><div class="stat-l">合計</div></div>
     <div class="stat"><div class="stat-n" id="statReady">0</div><div class="stat-l">準備OK</div></div>
@@ -191,9 +278,12 @@
 
 <hr>
 
-<!-- ④ CSV出力 -->
+<!-- ⑥ CSV -->
 <div class="section">
-  <div class="section-title">④ スプシ出力</div>
+  <div class="sec-head">
+    <div class="sec-num">6</div>
+    <div class="sec-title">スプシ出力</div>
+  </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;">
     <button class="btn btn-gray" onclick="copyCSV()">📋 CSVをコピー</button>
     <button class="btn btn-gray" onclick="downloadCSV()">⬇️ ダウンロード</button>
@@ -204,25 +294,113 @@
 <div id="toast"></div>
 
 <script>
-let videos = JSON.parse(localStorage.getItem('moto_videos') || '[]');
-let selectedFmt = '';
-let currentFilter = 'all';
+// ============================
+// 検索データ
+// ============================
+const SEARCH_DATA = {
+  lifehack: [
+    { label:'TikTok', kw:'大げさ ライフハック', sub:'大げさな手順系' },
+    { label:'TikTok', kw:'#lifehack 嘘', sub:'フェイクライフハック' },
+    { label:'TikTok', kw:'やってみた 意味ない', sub:'意味ない検証系' },
+    { label:'TikTok', kw:'天才的な方法 これだけで', sub:'大げさ説明系' },
+    { label:'YouTube', kw:'life hack gone wrong', sub:'海外バズり系', yt:true },
+    { label:'YouTube', kw:'unnecessarily complicated life hack', sub:'複雑すぎる系', yt:true },
+  ],
+  cooking: [
+    { label:'TikTok', kw:'料理ハック すごい', sub:'大げさ料理系' },
+    { label:'TikTok', kw:'これだけで料理が変わる', sub:'大げさ説明系' },
+    { label:'TikTok', kw:'#cookinglifehack', sub:'料理ライフハック' },
+    { label:'TikTok', kw:'食材 裏技 これが正解', sub:'裏技系' },
+    { label:'YouTube', kw:'overcomplicated cooking hack', sub:'複雑調理系', yt:true },
+    { label:'YouTube', kw:'料理 やってみた 簡単すぎ', sub:'日本語料理検証', yt:true },
+  ],
+  diy: [
+    { label:'TikTok', kw:'DIY 天才すぎる', sub:'天才DIY系' },
+    { label:'TikTok', kw:'#diy 大げさ 修理', sub:'大げさ修理系' },
+    { label:'TikTok', kw:'これで解決 裏技 工具', sub:'工具裏技系' },
+    { label:'TikTok', kw:'#lifehack diy 意外な方法', sub:'意外な解決系' },
+    { label:'YouTube', kw:'overcomplicated diy fix', sub:'複雑DIY系', yt:true },
+    { label:'YouTube', kw:'diy hack funny fail', sub:'DIY失敗系', yt:true },
+  ],
+  cleaning: [
+    { label:'TikTok', kw:'掃除ハック これだけで', sub:'掃除ハック系' },
+    { label:'TikTok', kw:'#cleaninghacks すごい', sub:'掃除SNS系' },
+    { label:'TikTok', kw:'汚れ 落とし方 裏技', sub:'汚れ落とし系' },
+    { label:'TikTok', kw:'家事 天才的な方法', sub:'家事ハック系' },
+    { label:'YouTube', kw:'cleaning hack gone wrong', sub:'掃除失敗系', yt:true },
+    { label:'YouTube', kw:'unnecessarily complicated cleaning', sub:'複雑掃除系', yt:true },
+  ],
+  beauty: [
+    { label:'TikTok', kw:'メイク 裏技 これだけで', sub:'メイク裏技系' },
+    { label:'TikTok', kw:'#beautyhack 大げさ', sub:'美容ハック系' },
+    { label:'TikTok', kw:'ファッション 天才的な着こなし', sub:'ファッション系' },
+    { label:'TikTok', kw:'スキンケア これだけで変わる', sub:'スキンケア系' },
+    { label:'YouTube', kw:'beauty hack overcomplicated funny', sub:'複雑美容系', yt:true },
+    { label:'YouTube', kw:'fashion hack gone wrong', sub:'ファッション失敗系', yt:true },
+  ],
+};
 
-function save() { localStorage.setItem('moto_videos', JSON.stringify(videos)); }
+let currentCat = 'lifehack';
+
+function setCat(el, cat) {
+  document.querySelectorAll('.cat-btn').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  currentCat = cat;
+  renderSearchGrid();
+}
+
+function renderSearchGrid() {
+  const items = SEARCH_DATA[currentCat] || [];
+  document.getElementById('searchGrid').innerHTML = items.map((item, i) => `
+    <div class="search-item" onclick="doSearch(${i})">
+      <div class="search-item-label">${item.label}</div>
+      <div class="search-item-kw">${esc(item.kw)}</div>
+      <div class="search-item-sub">${esc(item.sub)}</div>
+    </div>
+  `).join('');
+}
+
+function doSearch(i) {
+  const item = SEARCH_DATA[currentCat][i];
+  if (item.yt) {
+    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(item.kw)}`, '_blank');
+  } else {
+    window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(item.kw)}`, '_blank');
+  }
+}
+
+function customSearch() {
+  const kw = document.getElementById('customKw').value.trim();
+  if (!kw) { toast('キーワードを入力してください'); return; }
+  window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(kw)}`, '_blank');
+}
+
+function customSearchYT() {
+  const kw = document.getElementById('customKw').value.trim();
+  if (!kw) { toast('キーワードを入力してください'); return; }
+  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(kw)}`, '_blank');
+}
 
 // ============================
-// 解析
+// Google Lens
+// ============================
+function openLens() { window.open('https://lens.google.com/', '_blank'); }
+function openVideo() {
+  const url = document.getElementById('lensVideoUrl').value.trim();
+  if (!url) { toast('URLを入力してください'); return; }
+  window.open(url, '_blank');
+}
+
+// ============================
+// ① Stitch解析
 // ============================
 async function analyzeStitch() {
   const url = document.getElementById('stitchUrl').value.trim();
   if (!url) { toast('URLを入力してください'); return; }
-
   document.getElementById('result').style.display = 'none';
   document.getElementById('loading').style.display = 'block';
 
   let oembedData = null;
-
-  // oEmbed取得
   try {
     const ep = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
     try {
@@ -233,23 +411,19 @@ async function analyzeStitch() {
       const j = await r2.json();
       oembedData = JSON.parse(j.contents);
     }
-  } catch(e) { /* ignore */ }
+  } catch {}
 
   document.getElementById('loading').style.display = 'none';
 
   const title = oembedData?.title || '';
   const authorHandle = (oembedData?.author_url?.match(/@([\w.]+)/) || [])[1] || '';
   const authorName   = oembedData?.author_name || '';
-
-  // タイトルから @mentions 抽出（投稿者自身を除外）
-  const rawMentions = [...new Set(title.match(/@[\w.]+/g) || [])];
+  const rawMentions  = [...new Set(title.match(/@[\w.]+/g) || [])];
   const others = rawMentions.filter(m => m.toLowerCase() !== '@' + authorHandle.toLowerCase());
 
   if (others.length > 0) {
-    // ✅ Stitch元アカウント自動検出
     showFound(url, authorHandle, authorName, title, others);
   } else {
-    // ⚠️ 手動入力モード
     showManual(url, authorHandle, authorName, title);
   }
 }
@@ -257,119 +431,89 @@ async function analyzeStitch() {
 function showFound(inputUrl, authorHandle, authorName, title, mentions) {
   const r = document.getElementById('result');
   r.style.display = 'block';
-
-  const firstHandle = mentions[0];
-  const profileUrl  = `https://www.tiktok.com/${firstHandle}`;
-
   r.innerHTML = `
-    <div class="result-found">
-      <div class="badge-green">✅ Stitch元アカウントを自動検出</div>
+    <div class="r-found">
+      <div class="badge-g">✅ Stitch元アカウントを自動検出</div>
       <div class="rl">この動画の投稿者</div>
       <div class="rv">@${esc(authorHandle)} — ${esc(authorName)}</div>
       <div class="rl">冒頭に使われた元動画の投稿者</div>
-      <div class="rv">${mentions.map(m=>`<span style="color:#22c55e">${esc(m)}</span>`).join(' &nbsp;/&nbsp; ')}</div>
+      <div class="rv">${mentions.map(m=>`<span style="color:#22c55e">${esc(m)}</span>`).join(' / ')}</div>
       <div class="rl">動画タイトル</div>
       <div class="rt">${esc(title)}</div>
       <div class="btns">
         ${mentions.map(m=>`<a href="https://www.tiktok.com/${esc(m)}" target="_blank" class="btn btn-blue btn-sm">${esc(m)} のページを開く</a>`).join('')}
         <button class="btn btn-gray btn-sm" onclick="window.open('${esc(inputUrl)}','_blank')">Stitch動画を開く</button>
       </div>
-      <div class="autofill" onclick="autofill('${esc(profileUrl)}','${esc(title)}')">↓ ②フォームに自動入力</div>
-    </div>
-  `;
+      <div class="autofill" onclick="autofill('https://www.tiktok.com/${esc(mentions[0])}','${esc(title)}')">↓ ④フォームに自動入力</div>
+    </div>`;
 }
 
 function showManual(inputUrl, authorHandle, authorName, title) {
   const r = document.getElementById('result');
   r.style.display = 'block';
-
-  // 動画を自動で新タブに開く
+  // 動画を自動で開く
   window.open(inputUrl, '_blank');
+  // Googleレンズ欄にURLを自動コピー
+  document.getElementById('lensVideoUrl').value = inputUrl;
 
   r.innerHTML = `
-    <div class="result-manual">
-      <div class="badge-yellow">📽️ 動画を開きました — 冒頭の投稿者名を確認してください</div>
-      <div class="rl">この動画の投稿者</div>
-      <div class="rv">@${esc(authorHandle)} — ${esc(authorName)}</div>
-      ${title ? `<div class="rl">動画タイトル</div><div class="rt">${esc(title)}</div>` : ''}
-
-      <div class="manual-panel">
-        <div class="manual-hint">
-          動画の冒頭<b>3〜5秒</b>に元の投稿者名が表示されます。<br>
-          確認したら <b>@名（@は不要）</b> を入力してください。
-        </div>
-        <div class="handle-row">
-          <span class="handle-prefix">@</span>
-          <input type="text" id="manualHandle" placeholder="元投稿者のユーザー名" style="flex:1;" onkeydown="if(event.key==='Enter')lookupHandle()" />
-          <button class="btn btn-yellow btn-sm" onclick="lookupHandle()">確認</button>
-        </div>
-        <div id="handleResult" style="margin-top:10px;"></div>
+    <div class="r-manual">
+      <div class="badge-y">📽️ 手動編集動画 — 動画を新タブで開きました</div>
+      ${authorHandle ? `<div class="rl">この動画の投稿者</div><div class="rv">@${esc(authorHandle)} — ${esc(authorName)}</div>` : ''}
+      ${title ? `<div class="rl">タイトル</div><div class="rt">${esc(title)}</div>` : ''}
+      <div class="manual-hint">
+        👆 冒頭の他人の動画が映る部分で一時停止して<b>スクショ → ②Google Lensへ</b><br>
+        または 冒頭に表示される<b>@名を下に入力</b>してください
       </div>
-    </div>
-  `;
-
-  // フォーカス
-  setTimeout(() => {
-    const el = document.getElementById('manualHandle');
-    if (el) el.focus();
-  }, 300);
+      <div class="handle-row">
+        <span class="at-prefix">@</span>
+        <input type="text" id="manualHandle" placeholder="元投稿者のユーザー名" style="flex:1;" onkeydown="if(event.key==='Enter')lookupHandle()" />
+        <button class="btn btn-yellow btn-sm" onclick="lookupHandle()">確認</button>
+      </div>
+      <div id="handleResult"></div>
+    </div>`;
+  setTimeout(() => { const el = document.getElementById('manualHandle'); if(el) el.focus(); }, 200);
 }
 
 function lookupHandle() {
   const raw = document.getElementById('manualHandle').value.trim().replace(/^@/, '');
   if (!raw) { toast('@名を入力してください'); return; }
-
   const profileUrl = `https://www.tiktok.com/@${raw}`;
-  const memo = document.getElementById('stitchUrl').value.trim();
-
   document.getElementById('handleResult').innerHTML = `
-    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+    <div class="btns" style="margin-top:10px;">
       <a href="${esc(profileUrl)}" target="_blank" class="btn btn-blue btn-sm">@${esc(raw)} のページを開く</a>
-      <div class="autofill" onclick="autofill('${esc(profileUrl)}','')">↓ ②フォームに自動入力</div>
-    </div>
-  `;
+      <div class="autofill" onclick="autofill('${esc(profileUrl)}','')">↓ ④フォームに自動入力</div>
+    </div>`;
 }
 
 function autofill(url, memo) {
   document.getElementById('srcUrl').value = url;
   if (memo) document.getElementById('memo').value = memo;
-  document.getElementById('srcUrl').focus();
   toast('フォームに自動入力しました');
-  document.querySelector('.section:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
-}
-
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  document.querySelector('.section:nth-child(4)').scrollIntoView({ behavior:'smooth' });
 }
 
 // ============================
-// 登録フォーム
+// ④ 登録
 // ============================
+let videos = JSON.parse(localStorage.getItem('moto_videos') || '[]');
+let selectedFmt = '';
+let currentFilter = 'all';
+
+function save() { localStorage.setItem('moto_videos', JSON.stringify(videos)); }
+
 function selectFmt(el, fmt) {
   document.querySelectorAll('.fmt').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedFmt = fmt;
+  el.classList.add('selected'); selectedFmt = fmt;
 }
 
-function getChecked() {
-  return [...document.querySelectorAll('.cp.active')].map(el => el.dataset.val);
-}
+function getChecked() { return [...document.querySelectorAll('.cp.active')].map(e => e.dataset.val); }
 
 function addVideo() {
   const url = document.getElementById('srcUrl').value.trim();
-  if (!url) { toast('元動画URLを入力してください'); return; }
-  const v = {
-    id: Date.now(),
-    url,
-    memo: document.getElementById('memo').value.trim(),
-    format: selectedFmt || 'その他',
-    checks: getChecked(),
-    done: false,
-    addedAt: new Date().toLocaleDateString('ja-JP')
-  };
-  videos.unshift(v);
-  save(); resetForm(); render();
-  toast('追加しました！');
+  if (!url) { toast('URLを入力してください'); return; }
+  videos.unshift({ id: Date.now(), url, memo: document.getElementById('memo').value.trim(), format: selectedFmt||'その他', checks: getChecked(), done: false, addedAt: new Date().toLocaleDateString('ja-JP') });
+  save(); resetForm(); render(); toast('追加しました！');
 }
 
 function resetForm() {
@@ -380,28 +524,13 @@ function resetForm() {
   selectedFmt = '';
 }
 
-function toggleDone(id) {
-  const v = videos.find(x => x.id === id);
-  if (v) { v.done = !v.done; save(); render(); }
-}
-
-function deleteVideo(id) {
-  if (!confirm('削除しますか？')) return;
-  videos = videos.filter(x => x.id !== id);
-  save(); render();
-}
-
-function setFilter(f, el) {
-  currentFilter = f;
-  document.querySelectorAll('.fp').forEach(e => e.classList.remove('active'));
-  el.classList.add('active');
-  render();
-}
-
+function toggleDone(id) { const v=videos.find(x=>x.id===id); if(v){v.done=!v.done;save();render();} }
+function deleteVideo(id) { if(!confirm('削除しますか？'))return; videos=videos.filter(x=>x.id!==id); save();render(); }
+function setFilter(f,el) { currentFilter=f; document.querySelectorAll('.fp').forEach(e=>e.classList.remove('active')); el.classList.add('active'); render(); }
 function filtered() {
-  if (currentFilter === 'ready') return videos.filter(v => v.checks.length >= 5);
-  if (currentFilter === 'done')  return videos.filter(v => v.done);
-  if (currentFilter === 'todo')  return videos.filter(v => !v.done);
+  if(currentFilter==='ready') return videos.filter(v=>v.checks.length>=5);
+  if(currentFilter==='done')  return videos.filter(v=>v.done);
+  if(currentFilter==='todo')  return videos.filter(v=>!v.done);
   return videos;
 }
 
@@ -409,62 +538,45 @@ function render() {
   const list = document.getElementById('list');
   const fv = filtered();
   document.getElementById('statTotal').textContent = videos.length;
-  document.getElementById('statReady').textContent = videos.filter(v => v.checks.length >= 5).length;
-  document.getElementById('statDone').textContent  = videos.filter(v => v.done).length;
-
-  if (!fv.length) { list.innerHTML = '<div class="empty">動画がありません</div>'; return; }
-
-  list.innerHTML = fv.map(v => `
-    <div class="card" style="${v.done ? 'opacity:0.5;' : ''}">
+  document.getElementById('statReady').textContent = videos.filter(v=>v.checks.length>=5).length;
+  document.getElementById('statDone').textContent  = videos.filter(v=>v.done).length;
+  if (!fv.length) { list.innerHTML='<div class="empty">動画がありません</div>'; return; }
+  list.innerHTML = fv.map(v=>`
+    <div class="card" style="${v.done?'opacity:0.5;':''}">
       <div class="card-top">
-        <div class="card-title">${v.done ? '🎬 ' : ''}${esc(v.format)}</div>
+        <div class="card-title">${v.done?'🎬 ':''}${esc(v.format)}</div>
         <div class="card-score">${v.checks.length}/6</div>
       </div>
-      <div class="card-url">元動画: <a href="${esc(v.url)}" target="_blank">${v.url.length > 55 ? esc(v.url.slice(0,55))+'…' : esc(v.url)}</a></div>
-      ${v.memo ? `<div class="card-note">${esc(v.memo)}</div>` : ''}
+      <div class="card-url">元動画: <a href="${esc(v.url)}" target="_blank">${v.url.length>55?esc(v.url.slice(0,55))+'…':esc(v.url)}</a></div>
+      ${v.memo?`<div class="card-note">${esc(v.memo)}</div>`:''}
       <div class="tags">
         <span class="tag ft">${esc(v.format)}</span>
         ${v.checks.map(c=>`<span class="tag">${esc(c)}</span>`).join('')}
       </div>
       <div class="card-actions">
-        <button class="btn btn-gray btn-sm" onclick="toggleDone(${v.id})">${v.done ? '↩ 未撮影に戻す' : '✅ 撮影済みにする'}</button>
+        <button class="btn btn-gray btn-sm" onclick="toggleDone(${v.id})">${v.done?'↩ 未撮影に戻す':'✅ 撮影済みにする'}</button>
         <button class="btn btn-gray btn-sm" onclick="deleteVideo(${v.id})">🗑 削除</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 // ============================
 // CSV
 // ============================
 function toCSV() {
-  const h = ['元動画URL','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日'];
-  const rows = videos.map(v => [
-    v.url, v.memo, v.format, `${v.checks.length}/6`,
-    v.checks.join('・'), v.done ? '済み' : '未撮影', v.addedAt
-  ]);
-  return [h,...rows].map(r => r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const h=['元動画URL','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日'];
+  const rows=videos.map(v=>[v.url,v.memo,v.format,`${v.checks.length}/6`,v.checks.join('・'),v.done?'済み':'未撮影',v.addedAt]);
+  return [h,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
 }
+function copyCSV()    { navigator.clipboard.writeText(toCSV()).then(()=>toast('CSVをコピー！')); }
+function downloadCSV(){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+toCSV()],{type:'text/csv;charset=utf-8;'})); a.download=`moto_videos_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
+function openSheets() { window.open('https://sheets.new','_blank'); setTimeout(copyCSV,300); toast('SheetsにCtrl+Vで貼り付け'); }
 
-function copyCSV()     { navigator.clipboard.writeText(toCSV()).then(() => toast('CSVをコピー！')); }
-function downloadCSV() {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob(['﻿'+toCSV()], {type:'text/csv;charset=utf-8;'}));
-  a.download = `moto_videos_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-}
-function openSheets() {
-  window.open('https://sheets.new','_blank');
-  setTimeout(copyCSV, 300);
-  toast('SheetsにCtrl+Vで貼り付け');
-}
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
-}
-
+// 初期化
+renderSearchGrid();
 render();
 </script>
 </body>
