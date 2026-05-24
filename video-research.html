@@ -12,16 +12,16 @@
   .sub { color: #555; font-size: 13px; margin-bottom: 28px; }
 
   .section { margin-bottom: 28px; }
-  .section-title { font-size: 13px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .section-title { font-size: 12px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
 
   .input-row { display: flex; gap: 8px; }
   input[type="text"], textarea {
     background: #111; border: 1px solid #222; border-radius: 10px;
     color: #fff; font-size: 15px; padding: 12px 14px; width: 100%;
-    outline: none; transition: border-color 0.2s;
+    outline: none; transition: border-color 0.2s; font-family: inherit;
   }
   input[type="text"]:focus, textarea:focus { border-color: #ff4444; }
-  textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+  textarea { resize: vertical; min-height: 60px; }
 
   .btn { border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: bold; padding: 12px 20px; transition: all 0.15s; white-space: nowrap; }
   .btn-red   { background: #ff4444; color: #fff; }
@@ -30,14 +30,36 @@
   .btn-gray:hover { background: #2a2a2a; color: #fff; }
   .btn-green { background: #22c55e; color: #fff; }
   .btn-green:hover { background: #16a34a; }
+  .btn-blue  { background: #3b82f6; color: #fff; }
+  .btn-blue:hover { background: #2563eb; }
   .btn-sm { font-size: 12px; padding: 6px 12px; border-radius: 7px; }
 
+  /* 解析ボックス */
+  .analyze-box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 20px; }
+
+  /* 結果カード */
+  #result { display: none; margin-top: 16px; }
+  .result-card { background: #0f1f0f; border: 1px solid #22c55e; border-radius: 12px; padding: 16px; }
+  .result-card.not-found { background: #1f1000; border-color: #f59e0b; }
+  .result-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+  .result-value { font-size: 15px; font-weight: bold; margin-bottom: 12px; word-break: break-all; }
+  .result-title { font-size: 13px; color: #aaa; margin-bottom: 12px; }
+  .result-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .found-badge { font-size: 12px; font-weight: bold; color: #22c55e; margin-bottom: 8px; }
+  .warn-badge  { font-size: 12px; font-weight: bold; color: #f59e0b; margin-bottom: 8px; }
+
+  /* ローディング */
+  #loading { display: none; text-align: center; padding: 20px; color: #555; font-size: 14px; }
+  .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #333; border-top-color: #ff4444; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 登録フォーム */
   .form-box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 20px; }
   .form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
   label.form-label { font-size: 12px; color: #888; }
 
   .checks { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-  .check-pill { display: flex; align-items: center; gap: 6px; background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
+  .check-pill { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
   .check-pill.active { background: #1a2a1a; border-color: #22c55e; color: #22c55e; }
 
   .format-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
@@ -45,6 +67,7 @@
   .fmt:hover { border-color: #ff4444; }
   .fmt.selected { background: #2a0000; border-color: #ff4444; color: #ff4444; }
 
+  /* リスト */
   #list { display: flex; flex-direction: column; gap: 12px; }
   .card { background: #111; border: 1px solid #222; border-radius: 14px; padding: 16px; }
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
@@ -57,7 +80,7 @@
   .card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .tag { font-size: 11px; background: #1a2a1a; border: 1px solid #22c55e; color: #22c55e; border-radius: 12px; padding: 3px 10px; }
   .tag.fmt-tag { background: #2a0000; border-color: #ff4444; color: #ff4444; }
-  .card-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .card-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
 
   .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .filter-pill { background: #1a1a1a; border: 1px solid #333; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; }
@@ -67,32 +90,44 @@
   .empty { text-align: center; color: #444; padding: 40px 0; font-size: 14px; }
   hr { border: none; border-top: 1px solid #1a1a1a; margin: 28px 0; }
 
-  #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: bold; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; z-index: 999; }
+  #toast { position: fixed; bottom: 24px; right: 24px; background: #22c55e; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: bold; opacity: 0; transform: translateY(10px); transition: all 0.25s; pointer-events: none; z-index: 999; max-width: 280px; }
   #toast.show { opacity: 1; transform: translateY(0); }
 
   .stats { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .stat { background: #111; border: 1px solid #222; border-radius: 10px; padding: 12px 18px; text-align: center; flex: 1; min-width: 80px; }
   .stat-num { font-size: 22px; font-weight: bold; color: #ff4444; }
   .stat-label { font-size: 11px; color: #555; margin-top: 2px; }
+
+  /* 自動入力ボタン */
+  .autofill-btn { display: inline-block; font-size: 12px; color: #22c55e; border: 1px solid #22c55e; border-radius: 8px; padding: 4px 10px; cursor: pointer; margin-top: 8px; background: #0a1a0a; }
+  .autofill-btn:hover { background: #1a2a1a; }
 </style>
 </head>
 <body>
 
 <h1>🔍 元動画リサーチ</h1>
-<p class="sub">Stitch用の元動画を探して管理する</p>
+<p class="sub">Stitch動画から元の投稿者を自動特定 → 管理 → スプシ出力</p>
 
-<!-- ① 参考動画を開く -->
+<!-- ① Stitch元を自動解析 -->
 <div class="section">
-  <div class="section-title">① 参考動画を開く（Khaby Lame など）</div>
-  <div class="input-row">
-    <input type="text" id="refUrl" placeholder="TikTok / YouTube URL を貼り付け..." />
-    <button class="btn btn-red" onclick="openRef()">開く</button>
+  <div class="section-title">① Stitch動画のURLを貼る（Khaby Lameなど）</div>
+  <div class="analyze-box">
+    <div class="input-row">
+      <input type="text" id="stitchUrl" placeholder="https://vt.tiktok.com/... または tiktok.com/@.../video/..." />
+      <button class="btn btn-red" onclick="analyzeStitch()">解析</button>
+    </div>
+
+    <div id="loading"><span class="spinner"></span>解析中...</div>
+
+    <div id="result">
+      <!-- JSで生成 -->
+    </div>
   </div>
 </div>
 
 <!-- ② 元動画を登録 -->
 <div class="section">
-  <div class="section-title">② 見つけた元動画を登録</div>
+  <div class="section-title">② 元動画をリストに登録</div>
   <div class="form-box">
 
     <div class="form-row">
@@ -101,7 +136,7 @@
     </div>
 
     <div class="form-row">
-      <label class="form-label">メモ（どんな動画か・ラブがどう反応するか）</label>
+      <label class="form-label">メモ（どんな内容か・ラブの反応案）</label>
       <textarea id="memo" placeholder="例）大げさな料理手順→ラブがシンプルにやってドヤ顔"></textarea>
     </div>
 
@@ -168,15 +203,139 @@
 let videos = JSON.parse(localStorage.getItem('moto_videos') || '[]');
 let selectedFmt = '';
 let currentFilter = 'all';
+let lastFoundUrl = '';  // 解析で見つかったURL（自動入力用）
 
 function save() { localStorage.setItem('moto_videos', JSON.stringify(videos)); }
 
-function openRef() {
-  const url = document.getElementById('refUrl').value.trim();
+// ============================================================
+//  Stitch元を解析
+// ============================================================
+async function analyzeStitch() {
+  const url = document.getElementById('stitchUrl').value.trim();
   if (!url) { toast('URLを入力してください'); return; }
-  window.open(url, '_blank');
+
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+
+  try {
+    // TikTok oEmbed API（公開・CORS対応）
+    const oembedEndpoint = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
+    let data = null;
+
+    // まず直接fetch
+    try {
+      const res = await fetch(oembedEndpoint);
+      data = await res.json();
+    } catch(e) {
+      // CORS失敗→プロキシ経由
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(oembedEndpoint)}`;
+      const res2 = await fetch(proxyUrl);
+      const json2 = await res2.json();
+      data = JSON.parse(json2.contents);
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    showResult(url, data);
+
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    showFallback(url);
+  }
 }
 
+function showResult(inputUrl, data) {
+  const title = data.title || '';
+  const authorName = data.author_name || '';
+  const authorUrl  = data.author_url  || '';
+
+  // @mention を全部抽出
+  const mentions = [...new Set((title.match(/@[\w.]+/g) || []))];
+  // 投稿者自身のアカウントを除外
+  const authorHandle = (authorUrl.match(/@([\w.]+)/) || [])[1] || '';
+  const others = mentions.filter(m => m.toLowerCase() !== ('@' + authorHandle).toLowerCase());
+
+  const resultDiv = document.getElementById('result');
+  resultDiv.style.display = 'block';
+
+  if (others.length > 0) {
+    // Stitch元のアカウントが見つかった
+    const handles = others;
+    lastFoundUrl = `https://www.tiktok.com/${handles[0]}`;
+
+    resultDiv.innerHTML = `
+      <div class="result-card">
+        <div class="found-badge">✅ Stitch元アカウントを検出</div>
+        <div class="result-label">この動画の投稿者</div>
+        <div class="result-value">@${authorHandle} — ${authorName}</div>
+        <div class="result-label">冒頭に使われた元動画の投稿者</div>
+        <div class="result-value">${handles.join('  /  ')}</div>
+        <div class="result-label">動画タイトル</div>
+        <div class="result-title">${escHtml(title)}</div>
+        <div class="result-btns">
+          ${handles.map(h => `
+            <a href="https://www.tiktok.com/${h}" target="_blank" class="btn btn-blue btn-sm">${h} のページを開く</a>
+          `).join('')}
+          <button class="btn btn-gray btn-sm" onclick="openOriginal('${escHtml(inputUrl)}')">Stitch動画を開く</button>
+        </div>
+        <div class="autofill-btn" onclick="autofill('${escHtml(lastFoundUrl)}', '${escHtml(title)}')">
+          ↓ このURLを②登録フォームに自動入力
+        </div>
+      </div>
+    `;
+  } else {
+    // @mention なし → Stitch以外の動画 or 情報不足
+    resultDiv.innerHTML = `
+      <div class="result-card not-found">
+        <div class="warn-badge">⚠️ Stitch元アカウントが見つかりませんでした</div>
+        <div class="result-label">この動画の投稿者</div>
+        <div class="result-value">@${authorHandle} — ${authorName}</div>
+        <div class="result-label">動画タイトル</div>
+        <div class="result-title">${escHtml(title)}</div>
+        <p style="font-size:13px;color:#aaa;margin-top:10px;">
+          Stitch以外のフォーマットかもしれません。<br>動画を直接開いて冒頭を確認してください。
+        </p>
+        <div class="result-btns" style="margin-top:12px;">
+          <button class="btn btn-gray btn-sm" onclick="openOriginal('${escHtml(inputUrl)}')">動画を直接開く</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function showFallback(url) {
+  const resultDiv = document.getElementById('result');
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = `
+    <div class="result-card not-found">
+      <div class="warn-badge">⚠️ 自動解析できませんでした</div>
+      <p style="font-size:13px;color:#aaa;margin-bottom:12px;">
+        URLを直接開いて冒頭の元動画を確認してください。
+      </p>
+      <div class="result-btns">
+        <button class="btn btn-gray btn-sm" onclick="openOriginal('${escHtml(url)}')">動画を直接開く</button>
+      </div>
+    </div>
+  `;
+}
+
+function openOriginal(url) { window.open(url, '_blank'); }
+
+function autofill(url, title) {
+  document.getElementById('srcUrl').value = url;
+  document.getElementById('memo').value = title;
+  document.getElementById('srcUrl').focus();
+  toast('フォームに自動入力しました');
+  // スクロール
+  document.querySelector('.section:nth-child(2)').scrollIntoView({ behavior: 'smooth' });
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ============================================================
+//  登録フォーム
+// ============================================================
 function selectFmt(el, fmt) {
   document.querySelectorAll('.fmt').forEach(e => e.classList.remove('selected'));
   el.classList.add('selected');
@@ -246,18 +405,20 @@ function render() {
   document.getElementById('statTotal').textContent = videos.length;
   document.getElementById('statReady').textContent = videos.filter(v => v.checks.length >= 5).length;
   document.getElementById('statDone').textContent = videos.filter(v => v.done).length;
+
   if (fv.length === 0) { list.innerHTML = '<div class="empty">該当する動画がありません</div>'; return; }
+
   list.innerHTML = fv.map(v => `
     <div class="card" style="${v.done ? 'opacity:0.5;' : ''}">
       <div class="card-header">
-        <div class="card-title">${v.done ? '🎬 ' : ''}${v.format}</div>
+        <div class="card-title">${v.done ? '🎬 ' : ''}${escHtml(v.format)}</div>
         <div class="card-score">${v.checks.length}/6</div>
       </div>
-      <div class="card-url">元動画: <a href="${v.url}" target="_blank">${v.url.length > 55 ? v.url.slice(0,55)+'…' : v.url}</a></div>
-      ${v.memo ? `<div class="card-note">${v.memo}</div>` : ''}
+      <div class="card-url">元動画: <a href="${escHtml(v.url)}" target="_blank">${v.url.length > 55 ? escHtml(v.url.slice(0,55))+'…' : escHtml(v.url)}</a></div>
+      ${v.memo ? `<div class="card-note">${escHtml(v.memo)}</div>` : ''}
       <div class="card-tags">
-        <span class="tag fmt-tag">${v.format}</span>
-        ${v.checks.map(c => `<span class="tag">${c}</span>`).join('')}
+        <span class="tag fmt-tag">${escHtml(v.format)}</span>
+        ${v.checks.map(c => `<span class="tag">${escHtml(c)}</span>`).join('')}
       </div>
       <div class="card-actions">
         <button class="btn btn-gray btn-sm" onclick="toggleDone(${v.id})">${v.done ? '↩ 未撮影に戻す' : '✅ 撮影済みにする'}</button>
@@ -267,6 +428,9 @@ function render() {
   `).join('');
 }
 
+// ============================================================
+//  CSV
+// ============================================================
 function toCSV() {
   const header = ['元動画URL','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日'];
   const rows = videos.map(v => [
@@ -279,20 +443,21 @@ function toCSV() {
 function copyCSV() { navigator.clipboard.writeText(toCSV()).then(() => toast('CSVをコピーしました！')); }
 function downloadCSV() {
   const blob = new Blob(['﻿' + toCSV()], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `moto_videos_${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  a.href = URL.createObjectURL(blob);
+  a.download = `moto_videos_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
 }
 function openSheets() {
   window.open('https://sheets.new', '_blank');
   setTimeout(() => copyCSV(), 300);
   toast('Sheetsを開いてCtrl+VでOK');
 }
+
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 render();
