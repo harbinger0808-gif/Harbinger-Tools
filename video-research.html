@@ -150,6 +150,12 @@
 <div class="sec">
   <div class="sec-title">① 素材を探す</div>
 
+  <!-- URL直接開く -->
+  <div class="url-row" style="margin-bottom:14px;">
+    <input class="url-input" id="directUrl" placeholder="URLを貼り付けて直接開く（TikTok・YouTube・なんでもOK）" onkeydown="if(event.key==='Enter')openDirect()" />
+    <button class="paste-btn" onclick="openDirect()">開く</button>
+  </div>
+
   <!-- プラットフォーム切り替え -->
   <div class="platform-tabs">
     <div class="ptab active" id="ptab-tt" onclick="setPlatform('tiktok')">📱 TikTok</div>
@@ -290,6 +296,14 @@
 <div id="toast"></div>
 
 <script>
+function openDirect() {
+  const url = document.getElementById('directUrl').value.trim();
+  if (!url) { toast('URLを入力してください'); return; }
+  const fullUrl = url.startsWith('http') ? url : 'https://' + url;
+  window.open(fullUrl, '_blank');
+  document.getElementById('directUrl').value = '';
+}
+
 // ─ TikTok検索データ ─
 const TIKTOK_SEARCHES = {
   all: [
