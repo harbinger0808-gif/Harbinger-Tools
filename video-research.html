@@ -124,12 +124,42 @@
   /* ─ クイックペースト ─ */
   .quick-hint { font-size: 12px; color: #444; margin-bottom: 10px; }
   .quick-hint b { color: #888; }
+
+  /* ─ Khaby元ネタDB ─ */
+  .khaby-card { background: #0e0900; border: 1px solid #3a2500; border-radius: 14px; padding: 15px 16px; margin-bottom: 10px; }
+  .khaby-card:hover { border-color: #f59e0b; }
+  .khaby-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .khaby-rank { font-size: 11px; font-weight: bold; color: #f59e0b; background: #1e1200; border: 1px solid #3a2500; border-radius: 6px; padding: 3px 8px; white-space: nowrap; flex-shrink: 0; }
+  .khaby-title { font-size: 14px; font-weight: bold; color: #fff; }
+  .khaby-views { font-size: 11px; color: #666; margin-top: 2px; }
+  .khaby-orig { font-size: 12px; color: #999; line-height: 1.55; margin-bottom: 4px; }
+  .khaby-orig b { color: #f59e0b; }
+  .khaby-solve { font-size: 12px; color: #555; margin-bottom: 10px; }
+  .khaby-btns { display: flex; gap: 7px; flex-wrap: wrap; }
+  .k-btn { font-size: 12px; font-weight: bold; border: none; border-radius: 8px; padding: 7px 12px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.15s; }
+  .k-watch { background: #1c1000; border: 1px solid #f59e0b; color: #f59e0b; }
+  .k-watch:hover { background: #2a1800; }
+  .k-search { background: #0a100a; border: 1px solid #3b82f6; color: #3b82f6; }
+  .k-search:hover { background: #0d1a0d; }
+  .k-gg { background: #0a0a18; border: 1px solid #4285f4; color: #4285f4; }
+  .k-gg:hover { background: #0f0f22; }
+  .k-add { background: #22c55e; color: #fff; border: 1px solid #22c55e; }
+  .k-add:hover { background: #16a34a; }
 </style>
 </head>
 <body>
 
 <h1>🎬 Stitch素材リサーチ</h1>
 <p class="sub">元ネタを見つけてURLを貼るだけ → 撮影リスト管理</p>
+
+<!-- 🎭 Khabyの元ネタDB -->
+<div class="sec">
+  <div class="sec-title">🎭 Khabyの元ネタDB — パロディ用リスト</div>
+  <div style="font-size:12px;color:#555;margin-bottom:14px;">Khabyの超バズ動画と冒頭に使われた元ネタ内容。「元ネタを検索」で原本を探すか、そのまま撮影リストに追加できる。</div>
+  <div id="khabyList"></div>
+</div>
+
+<hr style="border-color:#181818;margin:24px 0;">
 
 <!-- 🕵️ 元動画を特定する（最上部） -->
 <div class="sec">
@@ -732,6 +762,146 @@ function copyScript() {
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
+// ─────────────────────────────────────────
+// Khaby元ネタDB
+// ─────────────────────────────────────────
+const KHABY_DB = [
+  {
+    rank: 1, views: '3.5億再生',
+    khabyUrl: 'https://www.tiktok.com/@khaby.lame/video/6979606181463526661',
+    title: 'バックシートミラーハック',
+    orig: '後部座席から後方確認するために<b>ドアの外にミラーを貼り付ける</b>謎のライフハック動画',
+    solve: 'Khabyの反応：普通に窓から顔を出して見ればいい',
+    searchQ: 'car backseat wing mirror sticker hack tiktok',
+    ttSearch: 'backseat wing mirror hack',
+  },
+  {
+    rank: 2, views: '3.0億再生',
+    khabyUrl: 'https://www.tiktok.com/@khaby.lame/video/6999284772195421445',
+    title: '髪が窓に挟まった問題',
+    orig: '車の窓に髪が挟まって取れなくなった女性が<b>ハサミで髪を切る</b>動画',
+    solve: 'Khabyの反応：窓を下げればいいだけ',
+    searchQ: 'hair stuck car window cut scissors tiktok life hack',
+    ttSearch: 'hair stuck car window hack',
+  },
+  {
+    rank: 3, views: '2.9億再生',
+    khabyUrl: 'https://www.tiktok.com/@khaby.lame/video/6971795480774708485',
+    title: 'ドアが開かない問題',
+    orig: '女性がドアを足でブロックしていて男性が入れず<b>窓をぶち破って入ろうとする</b>動画',
+    solve: 'Khabyの反応：足をどかしてドアを開ければいい',
+    searchQ: 'door blocked foot jump through window life hack tiktok',
+    ttSearch: 'door blocked foot tiktok hack',
+  },
+  {
+    rank: 4, views: '2.7億再生',
+    khabyUrl: 'https://www.tiktok.com/@khaby.lame/video/6958070927817067782',
+    title: 'トイレットペーパーハック',
+    orig: 'トイレットペーパーをより「便利に」切るための<b>大げさな手順を紹介</b>するライフハック動画',
+    solve: 'Khabyの反応：普通に手で切ればいい',
+    searchQ: 'toilet paper tear hack life hack tiktok tutorial',
+    ttSearch: 'toilet paper hack tutorial',
+  },
+  {
+    rank: 5, views: '2.7億再生',
+    khabyUrl: 'https://www.tiktok.com/@khaby.lame/video/6961405079870115077',
+    title: 'Tシャツがドアに挟まった問題',
+    orig: 'Tシャツが車のドアに挟まった男性が<b>ハサミでシャツを切って脱出</b>する動画',
+    solve: 'Khabyの反応：ドアを開ければシャツは取れる',
+    searchQ: 'shirt stuck car door cut tiktok life hack',
+    ttSearch: 'shirt stuck car door hack',
+  },
+  {
+    rank: 6, views: '2.7億再生',
+    khabyUrl: 'https://www.tiktok.com/search?q=khaby+lame+banana+knife',
+    title: 'バナナを包丁で切る男',
+    orig: '<b>バナナを大きな包丁やナイフで乱暴に切り刻む</b>謎の動画（大量に無駄になる）',
+    solve: 'Khabyの反応：普通に手で剥けばいい',
+    searchQ: 'banana cut knife life hack tiktok',
+    ttSearch: 'banana knife cutting hack',
+  },
+  {
+    rank: 7, views: '有名動画',
+    khabyUrl: 'https://www.tiktok.com/search?q=khaby+lame+miter+saw+burger',
+    title: '丸ノコでバーガーを切る男',
+    orig: '<b>丸ノコ（マイターソー）でハンバーガーを切る</b>という危険すぎるライフハック',
+    solve: 'Khabyの反応：木屑まみれのバーガーを食べさせられる',
+    searchQ: 'miter saw burger cut tiktok life hack',
+    ttSearch: 'miter saw burger hack',
+  },
+  {
+    rank: 8, views: '有名動画',
+    khabyUrl: 'https://www.tiktok.com/search?q=khaby+lame+hibachi+egg+trick',
+    title: '居酒屋の卵マジックを暴く',
+    orig: '鉄板焼き職人が<b>茶碗を卵の上に被せてトントンすると複数の卵が増える</b>マジック動画（@lindagonzales686）',
+    solve: 'Khabyの反応：茶碗に隠し卵があるのをバラす',
+    searchQ: 'site:tiktok.com @lindagonzales686 hibachi egg trick',
+    ttSearch: 'hibachi egg trick reveal',
+    creatorTt: 'https://www.tiktok.com/@lindagonzales686',
+  },
+  {
+    rank: 9, views: '有名動画',
+    khabyUrl: 'https://www.tiktok.com/search?q=khaby+lame+card+trick+money',
+    title: 'カードが$100札に変わるマジック',
+    orig: 'マジシャンが<b>トランプをパラパラするとすべて100ドル札に変わる</b>手品動画（@jenthemagician）',
+    solve: 'Khabyの反応：カードとお札がテープで繋がってるのを実演',
+    searchQ: 'site:tiktok.com @jenthemagician card trick dollar bills',
+    ttSearch: 'card trick dollar bills magic reveal',
+    creatorTt: 'https://www.tiktok.com/@jenthemagician',
+  },
+  {
+    rank: 10, views: '有名動画',
+    khabyUrl: 'https://www.tiktok.com/search?q=khaby+lame+mask+mug+handle',
+    title: 'マグカップの取っ手にマスクが挟まった',
+    orig: 'マスクのゴムがマグカップの取っ手に引っかかって取れず<b>取っ手を割って取り出す</b>動画',
+    solve: 'Khabyの反応：普通に引っ張れば取れる',
+    searchQ: 'mask stuck mug cup handle break tiktok life hack',
+    ttSearch: 'mask stuck mug handle hack',
+  },
+];
+
+function renderKhaby() {
+  const el = document.getElementById('khabyList');
+  el.innerHTML = KHABY_DB.map(k => `
+    <div class="khaby-card">
+      <div class="khaby-top">
+        <div>
+          <span class="khaby-rank">👑 #${k.rank} ${k.views}</span>
+        </div>
+        <div>
+          <div class="khaby-title">${esc(k.title)}</div>
+        </div>
+      </div>
+      <div class="khaby-orig">📹 元ネタ内容：${k.orig}</div>
+      <div class="khaby-solve" style="font-size:11px;color:#444;">💡 Khabyの反応：${esc(k.solve)}</div>
+      <div class="khaby-btns">
+        <a class="k-btn k-watch" href="${esc(k.khabyUrl)}" target="_blank">👁 Khabyの動画を見る</a>
+        <a class="k-btn k-search" href="https://www.tiktok.com/search?q=${encodeURIComponent(k.ttSearch)}" target="_blank">📱 TikTokで元ネタ探す</a>
+        <a class="k-btn k-gg" href="https://www.google.com/search?q=${encodeURIComponent(k.searchQ)}" target="_blank">🔍 Googleで探す</a>
+        ${k.creatorTt ? `<a class="k-btn" style="background:#0a1a0a;border:1px solid #22c55e;color:#22c55e;" href="${esc(k.creatorTt)}" target="_blank">✅ 元クリエイター</a>` : ''}
+        <button class="k-btn k-add" onclick="addFromKhaby(${k.rank})">＋ リストに追加</button>
+      </div>
+    </div>`).join('');
+}
+
+function addFromKhaby(rank) {
+  const k = KHABY_DB.find(x => x.rank === rank);
+  if (!k) return;
+  // 元ネタ検索URLをリストに追加
+  const searchUrl = `https://www.tiktok.com/search?q=${encodeURIComponent(k.ttSearch)}`;
+  videos.unshift({
+    id: Date.now(),
+    url: k.khabyUrl,
+    memo: `【Khabyパロディ #${k.rank}】${k.title} / 元ネタ：${k.ttSearch}`,
+    format: '✅ シンプルにやる',
+    checks: [],
+    done: false,
+    addedAt: new Date().toLocaleDateString('ja-JP')
+  });
+  save(); render();
+  toast(`#${rank} ${k.title} をリストに追加！`);
+}
+
 // Apps Script URL 初期設定
 if (!localStorage.getItem('apps_script_url')) {
   localStorage.setItem('apps_script_url', 'https://script.google.com/macros/s/AKfycbwaagrtzQ83u7E4kMlh32ujrAEKEVtGQNRvqZZgYf2OZ-BYbnf1guMK3jpBr5UQJZcU/exec');
@@ -739,6 +909,7 @@ if (!localStorage.getItem('apps_script_url')) {
 setPlatform('tiktok');
 updateSetupUI();
 render();
+renderKhaby();
 </script>
 </body>
 </html>
