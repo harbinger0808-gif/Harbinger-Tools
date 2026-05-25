@@ -24,6 +24,17 @@
   .acc-desc { font-size: 12px; color: #666; line-height: 1.4; margin-bottom: 6px; }
   .acc-badge { font-size: 11px; color: #ff4444; font-weight: bold; }
 
+  /* ─ カテゴリタブ ─ */
+  .cat-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+  .cat { background: #111; border: 1px solid #222; border-radius: 20px; padding: 7px 14px; cursor: pointer; font-size: 13px; transition: all 0.15s; user-select: none; }
+  .cat:hover { border-color: #ff4444; }
+  .cat.active { background: #1c0808; border-color: #ff4444; color: #ff4444; }
+
+  /* ─ YouTubeボタン列 ─ */
+  .yt-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .yt-btn { background: #1a1000; border: 1px solid #cc0000; border-radius: 8px; color: #ff4444; font-size: 12px; padding: 6px 12px; text-decoration: none; transition: all 0.15s; }
+  .yt-btn:hover { background: #2a1000; }
+
   /* ─ 保存フォーム ─ */
   .save-box { background: #111; border: 1px solid #222; border-radius: 14px; padding: 18px; }
   .url-row { display: flex; gap: 8px; margin-bottom: 14px; }
@@ -100,59 +111,28 @@
 <h1>🎬 Stitch素材リサーチ</h1>
 <p class="sub">元ネタを見つけてURLを貼るだけ → 撮影リスト管理</p>
 
-<!-- ① 元ネタアカウントに飛ぶ -->
+<!-- ① 素材を探す -->
 <div class="sec">
-  <div class="sec-title">① まずここを見る — 元ネタ量産アカウント</div>
-  <div class="acc-grid">
+  <div class="sec-title">① TikTokで素材を探す</div>
 
-    <a class="acc" href="https://www.youtube.com/results?search_query=5+minute+crafts" target="_blank">
-      <div class="acc-name">5 Minute Crafts</div>
-      <div class="acc-desc">大げさライフハックの最大供給源。Khabyが最も反応してるチャンネル</div>
-      <div class="acc-badge">YouTube 検索</div>
-    </a>
+  <!-- カテゴリタブ -->
+  <div class="cat-tabs" id="catTabs">
+    <div class="cat active" onclick="setCat('all',this)">全部</div>
+    <div class="cat" onclick="setCat('lifehack',this)">💡 ライフハック</div>
+    <div class="cat" onclick="setCat('cooking',this)">🍳 料理</div>
+    <div class="cat" onclick="setCat('diy',this)">🔨 DIY</div>
+    <div class="cat" onclick="setCat('beauty',this)">💄 美容</div>
+    <div class="cat" onclick="setCat('cleaning',this)">🧹 掃除</div>
+  </div>
 
-    <a class="acc" href="https://www.youtube.com/results?search_query=5+minute+crafts+life+hack&sp=CAI%253D" target="_blank">
-      <div class="acc-name">5MC 新着順</div>
-      <div class="acc-desc">5 Minute Crafts系を新着順で表示。フレッシュな素材が見つかる</div>
-      <div class="acc-badge">YouTube 新着順</div>
-    </a>
+  <div class="acc-grid" id="searchBtns"></div>
 
-    <a class="acc" href="https://www.youtube.com/results?search_query=blossom+life+hack" target="_blank">
-      <div class="acc-name">Blossom</div>
-      <div class="acc-desc">DIY・料理・ライフハック。大げさな手順が多くStitchしやすい</div>
-      <div class="acc-badge">YouTube 検索</div>
-    </a>
-
-    <a class="acc" href="https://www.youtube.com/results?search_query=bright+side+life+hack" target="_blank">
-      <div class="acc-name">Bright Side</div>
-      <div class="acc-desc">大げさな検証・やってみた系。Stitch素材が豊富</div>
-      <div class="acc-badge">YouTube 検索</div>
-    </a>
-
-    <a class="acc" href="https://www.tiktok.com/search?q=5+minute+crafts" target="_blank">
-      <div class="acc-name">5MC on TikTok</div>
-      <div class="acc-desc">TikTok版。短い動画なのでStitchしやすいものが多い</div>
-      <div class="acc-badge">TikTok 検索</div>
-    </a>
-
-    <a class="acc" href="https://www.tiktok.com/search?q=life+hack+tutorial" target="_blank">
-      <div class="acc-name">ライフハック系 TikTok</div>
-      <div class="acc-desc">ライフハック・チュートリアル系の最新動画を探す</div>
-      <div class="acc-badge">TikTok 検索</div>
-    </a>
-
-    <a class="acc" href="https://www.youtube.com/results?search_query=overcomplicated+life+hack" target="_blank">
-      <div class="acc-name">大げさライフハック</div>
-      <div class="acc-desc">「overcomplicated」で検索。Stitch反応しやすい大げさ系に絞れる</div>
-      <div class="acc-badge">YouTube 検索</div>
-    </a>
-
-    <a class="acc" href="https://www.youtube.com/results?search_query=diy+life+hack+compilation" target="_blank">
-      <div class="acc-name">DIY 総集編</div>
-      <div class="acc-desc">DIYライフハック総集編。1本に複数の素材候補が入ってる</div>
-      <div class="acc-badge">YouTube 検索</div>
-    </a>
-
+  <!-- YouTube補足 -->
+  <div class="yt-row">
+    <span style="font-size:12px;color:#555;">YouTubeも見る →</span>
+    <a class="yt-btn" href="https://www.youtube.com/results?search_query=5+minute+crafts+life+hack&sp=CAI%253D" target="_blank">5MC 新着</a>
+    <a class="yt-btn" href="https://www.youtube.com/results?search_query=blossom+diy+hack" target="_blank">Blossom</a>
+    <a class="yt-btn" href="https://www.youtube.com/results?search_query=overcomplicated+life+hack" target="_blank">大げさ系</a>
   </div>
 </div>
 
@@ -230,6 +210,79 @@
 <div id="toast"></div>
 
 <script>
+// ─ TikTok検索データ ─
+const TIKTOK_SEARCHES = {
+  all: [
+    { kw: '#lifehack',         note: '定番ライフハック系',       url: 'https://www.tiktok.com/tag/lifehack' },
+    { kw: '#5minutecrafts',    note: '5MC系・大げさ手順',        url: 'https://www.tiktok.com/tag/5minutecrafts' },
+    { kw: '#cookinghack',      note: '料理ライフハック',          url: 'https://www.tiktok.com/tag/cookinghack' },
+    { kw: '#diyhack',          note: 'DIY・工作系',              url: 'https://www.tiktok.com/tag/diyhack' },
+    { kw: '#cleaninghack',     note: '掃除・片付け系',            url: 'https://www.tiktok.com/tag/cleaninghack' },
+    { kw: '#beautyhack',       note: '美容・スキンケア系',        url: 'https://www.tiktok.com/tag/beautyhack' },
+    { kw: 'life hack tutorial', note: '手順系ライフハック',       url: 'https://www.tiktok.com/search?q=life+hack+tutorial' },
+    { kw: 'diy life hack',     note: 'DIY+ライフハック混合',      url: 'https://www.tiktok.com/search?q=diy+life+hack' },
+  ],
+  lifehack: [
+    { kw: '#lifehack',          note: '総合ライフハック',          url: 'https://www.tiktok.com/tag/lifehack' },
+    { kw: '#lifehackvideo',     note: 'ライフハック動画専門',      url: 'https://www.tiktok.com/tag/lifehackvideo' },
+    { kw: '#5minutecrafts',     note: '大げさな手順系',            url: 'https://www.tiktok.com/tag/5minutecrafts' },
+    { kw: '#lifehacks',         note: 'ライフハック複数形',        url: 'https://www.tiktok.com/tag/lifehacks' },
+    { kw: 'simple life hack',   note: 'シンプル系（反応しやすい）', url: 'https://www.tiktok.com/search?q=simple+life+hack' },
+    { kw: 'life hack tutorial', note: 'チュートリアル形式',        url: 'https://www.tiktok.com/search?q=life+hack+tutorial' },
+  ],
+  cooking: [
+    { kw: '#cookinghack',       note: '料理ライフハック',          url: 'https://www.tiktok.com/tag/cookinghack' },
+    { kw: '#foodhack',          note: 'フードハック全般',          url: 'https://www.tiktok.com/tag/foodhack' },
+    { kw: '#kitchenhack',       note: 'キッチン系裏技',            url: 'https://www.tiktok.com/tag/kitchenhack' },
+    { kw: '#cookingtips',       note: '料理テクニック系',          url: 'https://www.tiktok.com/tag/cookingtips' },
+    { kw: 'egg hack tutorial',  note: '卵系（Khaby頻出テーマ）',   url: 'https://www.tiktok.com/search?q=egg+hack+tutorial' },
+    { kw: 'cooking tutorial',   note: '調理チュートリアル',        url: 'https://www.tiktok.com/search?q=cooking+tutorial' },
+  ],
+  diy: [
+    { kw: '#diyhack',           note: 'DIYライフハック',           url: 'https://www.tiktok.com/tag/diyhack' },
+    { kw: '#diyproject',        note: 'DIYプロジェクト',           url: 'https://www.tiktok.com/tag/diyproject' },
+    { kw: '#crafthack',         note: 'クラフト系',               url: 'https://www.tiktok.com/tag/crafthack' },
+    { kw: '#satisfying',        note: '職人技・大げさ工作',        url: 'https://www.tiktok.com/tag/satisfying' },
+    { kw: 'repair hack',        note: '修理・修繕系',              url: 'https://www.tiktok.com/search?q=repair+hack' },
+    { kw: 'tool hack tutorial', note: '工具・道具系',              url: 'https://www.tiktok.com/search?q=tool+hack+tutorial' },
+  ],
+  beauty: [
+    { kw: '#beautyhack',        note: '美容ライフハック',          url: 'https://www.tiktok.com/tag/beautyhack' },
+    { kw: '#makeuptips',        note: 'メイクアップ系',            url: 'https://www.tiktok.com/tag/makeuptips' },
+    { kw: '#fashionhack',       note: 'ファッション系',            url: 'https://www.tiktok.com/tag/fashionhack' },
+    { kw: '#skincarehacks',     note: 'スキンケア系',              url: 'https://www.tiktok.com/tag/skincarehacks' },
+    { kw: 'beauty tutorial',    note: '美容チュートリアル',        url: 'https://www.tiktok.com/search?q=beauty+tutorial' },
+    { kw: 'makeup hack',        note: 'メイク裏技',               url: 'https://www.tiktok.com/search?q=makeup+hack' },
+  ],
+  cleaning: [
+    { kw: '#cleaninghack',      note: '掃除ライフハック',          url: 'https://www.tiktok.com/tag/cleaninghack' },
+    { kw: '#cleantok',          note: 'CleanTok全般',             url: 'https://www.tiktok.com/tag/cleantok' },
+    { kw: '#cleaningmotivation', note: '掃除モチベ系',            url: 'https://www.tiktok.com/tag/cleaningmotivation' },
+    { kw: '#organizinghacks',   note: '収納・片付け系',            url: 'https://www.tiktok.com/tag/organizinghacks' },
+    { kw: 'cleaning tutorial',  note: '掃除チュートリアル',        url: 'https://www.tiktok.com/search?q=cleaning+tutorial' },
+    { kw: 'stain removal hack', note: '汚れ落とし系',              url: 'https://www.tiktok.com/search?q=stain+removal+hack' },
+  ],
+};
+
+let currentCat = 'all';
+
+function setCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  renderSearchBtns();
+}
+
+function renderSearchBtns() {
+  const items = TIKTOK_SEARCHES[currentCat] || [];
+  document.getElementById('searchBtns').innerHTML = items.map(item => `
+    <a class="acc" href="${item.url}" target="_blank">
+      <div class="acc-name" style="color:#69c0ff;">${item.kw}</div>
+      <div class="acc-desc">${item.note}</div>
+      <div class="acc-badge">TikTok タグ/検索</div>
+    </a>`).join('');
+}
+
 let videos = JSON.parse(localStorage.getItem('stitch_list') || '[]');
 let currentFilter = 'all';
 let selectedFmt = '';
@@ -355,6 +408,7 @@ function openSheets(){ window.open('https://sheets.new', '_blank'); setTimeout(c
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
+renderSearchBtns();
 render();
 </script>
 </body>
