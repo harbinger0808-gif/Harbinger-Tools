@@ -625,6 +625,10 @@ function copyScript() {
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
+// Apps Script URL 初期設定
+if (!localStorage.getItem('apps_script_url')) {
+  localStorage.setItem('apps_script_url', 'https://script.google.com/macros/s/AKfycbwaagrtzQ83u7E4kMlh32ujrAEKEVtGQNRvqZZgYf2OZ-BYbnf1guMK3jpBr5UQJZcU/exec');
+}
 setPlatform('tiktok');
 updateSetupUI();
 render();
