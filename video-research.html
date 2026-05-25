@@ -131,6 +131,21 @@
 <h1>🎬 Stitch素材リサーチ</h1>
 <p class="sub">元ネタを見つけてURLを貼るだけ → 撮影リスト管理</p>
 
+<!-- 🕵️ 元動画を特定する（最上部） -->
+<div class="sec">
+  <div class="sec-title">🕵️ Khabyの元動画を特定する</div>
+  <div class="save-box">
+    <div class="quick-hint" style="margin-bottom:10px;">リアクション動画のURLを貼ると、元ネタを探す検索リンクを自動生成します</div>
+    <div class="url-row">
+      <input class="url-input" id="findUrl" placeholder="https://vt.tiktok.com/..." />
+      <button class="paste-btn" onclick="findOriginal()">元ネタを探す</button>
+    </div>
+    <div id="findResult" style="display:none; margin-top:14px;"></div>
+  </div>
+</div>
+
+<hr style="border-color:#181818;margin:24px 0;">
+
 <!-- ① 素材を探す -->
 <div class="sec">
   <div class="sec-title">① 素材を探す</div>
@@ -153,19 +168,6 @@
   </div>
 
   <div class="acc-grid" id="searchBtns"></div>
-</div>
-
-<!-- ① .5 元動画を特定する -->
-<div class="sec">
-  <div class="sec-title">🕵️ Khabyの元動画を特定する</div>
-  <div class="save-box">
-    <div class="quick-hint" style="margin-bottom:10px;">Khabyなどのリアクション動画URLを貼ると、元ネタを探す検索リンクを自動生成します</div>
-    <div class="url-row">
-      <input class="url-input" id="findUrl" placeholder="https://vt.tiktok.com/..." />
-      <button class="paste-btn" onclick="findOriginal()">元ネタを探す</button>
-    </div>
-    <div id="findResult" style="display:none; margin-top:14px;"></div>
-  </div>
 </div>
 
 <!-- ② URLを貼って保存 -->
