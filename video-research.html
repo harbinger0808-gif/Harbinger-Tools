@@ -125,6 +125,21 @@
   .quick-hint { font-size: 12px; color: #444; margin-bottom: 10px; }
   .quick-hint b { color: #888; }
 
+  /* ─ さいとうリスト ─ */
+  .saito-item { display: flex; align-items: center; gap: 10px; background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 10px; padding: 11px 13px; margin-bottom: 7px; transition: border-color 0.15s; }
+  .saito-item:hover { border-color: #333; }
+  .saito-num { font-size: 11px; color: #444; min-width: 22px; font-weight: bold; }
+  .saito-title { font-size: 13px; color: #ccc; flex: 1; line-height: 1.3; }
+  .saito-btns { display: flex; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+  .s-btn { font-size: 11px; font-weight: bold; border: none; border-radius: 7px; padding: 6px 10px; cursor: pointer; text-decoration: none; display: inline-block; white-space: nowrap; transition: all 0.15s; }
+  .s-watch { background: #130e00; border: 1px solid #f59e0b; color: #f59e0b; }
+  .s-watch:hover { background: #1e1500; }
+  .s-find { background: #0a1020; border: 1px solid #3b82f6; color: #3b82f6; }
+  .s-find:hover { background: #0f1830; }
+  .s-add { background: #071507; border: 1px solid #22c55e; color: #22c55e; }
+  .s-add:hover { background: #0e2b0e; }
+  @media(max-width:480px){ .saito-item { flex-direction:column; align-items:flex-start; } }
+
   /* ─ Khaby元ネタDB ─ */
   .khaby-card { background: #0e0900; border: 1px solid #3a2500; border-radius: 14px; padding: 15px 16px; margin-bottom: 10px; }
   .khaby-card:hover { border-color: #f59e0b; }
@@ -152,9 +167,22 @@
 <h1>🎬 Stitch素材リサーチ</h1>
 <p class="sub">元ネタを見つけてURLを貼るだけ → 撮影リスト管理</p>
 
+<!-- 📋 さいとうたかし厳選21本 -->
+<div class="sec">
+  <div class="sec-title">📋 さいとうたかし 厳選21本 — Khabyパロディ候補</div>
+  <div style="font-size:12px;color:#555;margin-bottom:14px;">①「Khabyを見る」で動画の最初の数秒を確認 → ②「元ネタを探す」でその動画を検索 → ③見つけたらラブで再現！</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="paste-btn" style="font-size:12px;padding:8px 14px;" onclick="openAllSaito()">⚡ 全部まとめて開く（21本）</button>
+    <button class="btn btn-g" onclick="addAllSaito()" style="font-size:12px;padding:8px 14px;border-radius:8px;">＋ 全部リストに追加</button>
+  </div>
+  <div id="saitoList"></div>
+</div>
+
+<hr style="border-color:#181818;margin:24px 0;">
+
 <!-- 🎭 Khabyの元ネタDB -->
 <div class="sec">
-  <div class="sec-title">🎭 Khabyの元ネタDB — パロディ用リスト</div>
+  <div class="sec-title">🎭 Khabyの元ネタDB — 超有名バズ動画10本</div>
   <div style="font-size:12px;color:#555;margin-bottom:14px;">Khabyの超バズ動画と冒頭に使われた元ネタ内容。「元ネタを検索」で原本を探すか、そのまま撮影リストに追加できる。</div>
   <div id="khabyList"></div>
 </div>
@@ -763,6 +791,91 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
 // ─────────────────────────────────────────
+// さいとうたかし厳選21本
+// ─────────────────────────────────────────
+const SAITO_LIST = [
+  { url: 'https://vt.tiktok.com/ZSx5MR78S/', title: 'Must be the wind 👀🤨', hint: '風のせいにする謎の動作', q: 'must be the wind life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5M2rdS/', title: 'Very refreshing, thank you man 👍🏿', hint: '大げさな冷却・飲み物ハック', q: 'refreshing drink cooling life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx56KsNY/', title: "It's always the same story with you neighbor…", hint: 'お隣さんとの定番トラブル系', q: 'neighbor same story life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5M6vYa/', title: 'My bad bro, I just wanted to save your life… 💀', hint: '大げさな"命を救う"謎ハック', q: 'save your life dangerous life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5MCyFF/', title: 'It happens every time 🥲', hint: '毎回繰り返す謎の失敗系', q: 'it happens every time life hack fail tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5MwW5P/', title: 'Here some options 👍🏿', hint: '複数の大げさな選択肢を紹介', q: 'here some options choice life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rhSAe/', title: 'I saw you man 👀', hint: '見られている→大げさな対処', q: 'i saw you caught tiktok original life hack' },
+  { url: 'https://vt.tiktok.com/ZSx5rMJAR/', title: 'Maybe tomorrow, or maybe never…', hint: '先送りし続ける謎の作業系', q: 'maybe tomorrow procrastination life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rYN3G/', title: 'I got you bro 👍🏿', hint: '不必要なサポートをする系', q: 'i got you bro help life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rhJXt/', title: 'Sorry teacher, phone to school again', hint: '学校でスマホ使う大げさな方法', q: 'phone school hide teacher life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rsLFg/', title: 'Level ♾️', hint: '究極に大げさなハックLevel∞', q: 'level infinite life hack overcomplicated tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rQq9C/', title: 'You can try it this way too', hint: '別の大げさな方法を提示', q: 'you can try it this way life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rUVRf/', title: 'My bad man, I was training 🥷🏾', hint: '訓練と称した大げさな行動', q: 'training ninja life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5r9jts/', title: 'Did I lost something? @Joe Scandrett', hint: '@Joe Scandrettとのコラボ系', q: 'Joe Scandrett did i lost something tiktok life hack' },
+  { url: 'https://vt.tiktok.com/ZSx5hRCGT/', title: 'Express delivery🔥!!! 📦', hint: '大げさな荷物・配達ハック', q: 'express delivery package hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5rvmYe/', title: 'Someone please help the cameraman 📷', hint: 'カメラマンが困る大げさシチュ', q: 'help the cameraman tiktok life hack original' },
+  { url: 'https://vt.tiktok.com/ZSx5rTEGo/', title: "It was fun in the beginning, but now I'm changing my signature 🥲", hint: 'Khabyのサインポーズを変える系', q: 'khaby lame signature gesture changing tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5hXEbL/', title: 'So… is this how they work ???🤔', hint: '謎の使い方を実演するハック', q: 'is this how they work life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5hPqCg/', title: 'Oh man! These toilets are not comfortable. Just use a normal one 🤲🏾', hint: '大げさトイレハック', q: 'toilet hack uncomfortable tiktok life hack original' },
+  { url: 'https://vt.tiktok.com/ZSx5hUrpg/', title: 'Your fish will need a passport 🐟', hint: '釣り・魚に関する大げさハック', q: 'fish passport fishing life hack tiktok original' },
+  { url: 'https://vt.tiktok.com/ZSx5hnCT3/', title: 'I promise it works', hint: '動かないのに「これで効く」と主張', q: '"I promise it works" life hack tiktok original' },
+];
+
+function cleanTitle(t) {
+  return t.replace(/#\S+/g,'').replace(/@\S+/g,'').trim();
+}
+
+function renderSaito() {
+  const el = document.getElementById('saitoList');
+  el.innerHTML = SAITO_LIST.map((v, i) => `
+    <div class="saito-item">
+      <div class="saito-num">${i+1}</div>
+      <div class="saito-title">
+        <div>${esc(cleanTitle(v.title))}</div>
+        <div style="font-size:11px;color:#444;margin-top:2px;">${esc(v.hint)}</div>
+      </div>
+      <div class="saito-btns">
+        <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁 Khabyを見る</a>
+        <a class="s-btn s-find" href="https://www.google.com/search?q=${encodeURIComponent(v.q)}" target="_blank">🔍 元ネタを探す</a>
+        <a class="s-btn s-find" href="https://www.tiktok.com/search?q=${encodeURIComponent(cleanTitle(v.title))}" target="_blank" style="border-color:#69c0ff;color:#69c0ff;background:#08101a;">📱 TikTok</a>
+        <button class="s-btn s-add" onclick="addFromSaito(${i})">＋</button>
+      </div>
+    </div>`).join('');
+}
+
+function addFromSaito(i) {
+  const v = SAITO_LIST[i];
+  videos.unshift({
+    id: Date.now(),
+    url: v.url,
+    memo: `【さいとう厳選 #${i+1}】${cleanTitle(v.title)} / ${v.hint}`,
+    format: '✅ シンプルにやる',
+    checks: [],
+    done: false,
+    addedAt: new Date().toLocaleDateString('ja-JP')
+  });
+  save(); render();
+  toast(`#${i+1} をリストに追加！`);
+}
+
+function addAllSaito() {
+  SAITO_LIST.forEach((v, i) => {
+    videos.unshift({
+      id: Date.now() + i,
+      url: v.url,
+      memo: `【さいとう厳選 #${i+1}】${cleanTitle(v.title)} / ${v.hint}`,
+      format: '✅ シンプルにやる',
+      checks: [],
+      done: false,
+      addedAt: new Date().toLocaleDateString('ja-JP')
+    });
+  });
+  save(); render();
+  toast(`21本を撮影リストに追加しました！`);
+}
+
+function openAllSaito() {
+  if (!confirm('21本のTikTok動画を一度に開きます。ブラウザのポップアップ許可が必要な場合があります。続けますか？')) return;
+  SAITO_LIST.forEach(v => window.open(v.url, '_blank'));
+}
+
+// ─────────────────────────────────────────
 // Khaby元ネタDB
 // ─────────────────────────────────────────
 const KHABY_DB = [
@@ -909,6 +1022,7 @@ if (!localStorage.getItem('apps_script_url')) {
 setPlatform('tiktok');
 updateSetupUI();
 render();
+renderSaito();
 renderKhaby();
 </script>
 </body>
