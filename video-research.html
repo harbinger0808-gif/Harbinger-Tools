@@ -189,6 +189,15 @@
 
 <hr style="border-color:#181818;margin:24px 0;">
 
+<!-- 🕰️ 元ネタあり時代のKhaby動画を探す -->
+<div class="sec">
+  <div class="sec-title">🕰️ 元ネタあり時代のKhaby動画を探す（2020〜2022年）</div>
+  <div style="font-size:12px;color:#555;margin-bottom:14px;">この時代のKhabyは他人のライフハック動画にStitch → <b style="color:#f59e0b;">元ネタURLが存在する</b>。見つけた動画をStitchすればラブで完全再現できる。</div>
+  <div class="acc-grid" id="oldKhabyBtns"></div>
+</div>
+
+<hr style="border-color:#181818;margin:24px 0;">
+
 <!-- 🕵️ 元動画を特定する（最上部） -->
 <div class="sec">
   <div class="sec-title">🕵️ Khabyの元動画を特定する</div>
@@ -791,6 +800,69 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
 // ─────────────────────────────────────────
+// 元ネタあり時代のKhaby動画検索
+// ─────────────────────────────────────────
+const OLD_KHABY_BTNS = [
+  {
+    name: '📅 Google — 2021年のKhaby動画',
+    desc: '2021年投稿に絞って検索（元ネタStitch時代）',
+    url: 'https://www.google.com/search?q=khaby+lame+tiktok+reaction+life+hack&tbs=cdr:1,cd_min:1/1/2021,cd_max:12/31/2021',
+    color: '#4285f4'
+  },
+  {
+    name: '📅 Google — 2022年のKhaby動画',
+    desc: '2022年前半まで元ネタあり動画が残ってる',
+    url: 'https://www.google.com/search?q=khaby+lame+tiktok+original+source+video&tbs=cdr:1,cd_min:1/1/2022,cd_max:6/30/2022',
+    color: '#4285f4'
+  },
+  {
+    name: '🔍 Google — Khabyが反応した動画まとめ',
+    desc: '「original creator」「source video」で元ネタ記事を探す',
+    url: 'https://www.google.com/search?q=khaby+lame+original+creator+source+video+2021',
+    color: '#4285f4'
+  },
+  {
+    name: '📱 TikTok — @khaby.lame プロフィール',
+    desc: '古い動画順にスクロール → 2021年ごろのを探す',
+    url: 'https://www.tiktok.com/@khaby.lame',
+    color: '#69c0ff'
+  },
+  {
+    name: '▶️ YouTube — Khaby 2021年反応動画',
+    desc: 'YouTubeに転載された2021年頃のKhaby動画',
+    url: 'https://www.youtube.com/results?search_query=khaby+lame+reaction+life+hack+2021&sp=CAI%253D',
+    color: '#ff4444'
+  },
+  {
+    name: '💬 Reddit — 元ネタ特定スレ',
+    desc: 'ファンが元ネタ動画を特定しているスレがある',
+    url: 'https://www.reddit.com/search/?q=khaby+lame+original+video+source&sort=top',
+    color: '#ff6314'
+  },
+  {
+    name: '📱 TikTok — Khabyにステッチした動画',
+    desc: '他ユーザーがStitchした動画のコメントに元ネタが出る',
+    url: 'https://www.tiktok.com/search?q=stitch+khaby+lame+2021',
+    color: '#69c0ff'
+  },
+  {
+    name: '🔍 Google — 「Khaby Lame who made original」',
+    desc: '英語圏で元クリエイターを調べている記事・スレ',
+    url: 'https://www.google.com/search?q=%22khaby+lame%22+%22who+made%22+OR+%22original+video%22+OR+%22source+video%22',
+    color: '#4285f4'
+  },
+];
+
+function renderOldKhaby() {
+  const el = document.getElementById('oldKhabyBtns');
+  el.innerHTML = OLD_KHABY_BTNS.map(b => `
+    <a class="acc" href="${b.url}" target="_blank">
+      <div class="acc-name" style="color:${b.color};">${b.name}</div>
+      <div class="acc-desc">${b.desc}</div>
+    </a>`).join('');
+}
+
+// ─────────────────────────────────────────
 // さいとうたかし厳選21本
 // ─────────────────────────────────────────
 const SAITO_LIST = [
@@ -1024,6 +1096,7 @@ updateSetupUI();
 render();
 renderSaito();
 renderKhaby();
+renderOldKhaby();
 </script>
 </body>
 </html>
