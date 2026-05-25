@@ -297,46 +297,47 @@
 // ============================
 // 検索データ
 // ============================
+// ※ Khabyが「反応する側」のコンテンツ → 元ネタ系クリエイターに直接飛ぶ
 const SEARCH_DATA = {
   lifehack: [
-    { label:'TikTok', kw:'大げさ ライフハック', sub:'大げさな手順系' },
-    { label:'TikTok', kw:'#lifehack 嘘', sub:'フェイクライフハック' },
-    { label:'TikTok', kw:'やってみた 意味ない', sub:'意味ない検証系' },
-    { label:'TikTok', kw:'天才的な方法 これだけで', sub:'大げさ説明系' },
-    { label:'YouTube', kw:'life hack gone wrong', sub:'海外バズり系', yt:true },
-    { label:'YouTube', kw:'unnecessarily complicated life hack', sub:'複雑すぎる系', yt:true },
+    { label:'アカウント直リンク', kw:'5 Minute Crafts', sub:'Khabyが最多反応するチャンネル', url:'https://www.tiktok.com/@5minutecrafts' },
+    { label:'アカウント直リンク', kw:'Craft Factory', sub:'大げさDIY・ライフハック系', url:'https://www.tiktok.com/@craftyfarm' },
+    { label:'TikTok 最新順', kw:'#5minutecrafts', sub:'最新投稿から探す（Khaby除外しやすい）' },
+    { label:'TikTok 最新順', kw:'#lifehackvideo', sub:'ライフハック最新' },
+    { label:'YouTube', kw:'5 minute crafts life hack', sub:'元ネタの宝庫', yt:true },
+    { label:'YouTube', kw:'simple life hack tutorial funny', sub:'大げさ手順系', yt:true },
   ],
   cooking: [
-    { label:'TikTok', kw:'料理ハック すごい', sub:'大げさ料理系' },
-    { label:'TikTok', kw:'これだけで料理が変わる', sub:'大げさ説明系' },
-    { label:'TikTok', kw:'#cookinglifehack', sub:'料理ライフハック' },
-    { label:'TikTok', kw:'食材 裏技 これが正解', sub:'裏技系' },
-    { label:'YouTube', kw:'overcomplicated cooking hack', sub:'複雑調理系', yt:true },
-    { label:'YouTube', kw:'料理 やってみた 簡単すぎ', sub:'日本語料理検証', yt:true },
+    { label:'アカウント直リンク', kw:'Nino\'s Home', sub:'大げさ料理パフォーマンス系', url:'https://www.tiktok.com/@ninouhome' },
+    { label:'アカウント直リンク', kw:'Cooking With Lynja', sub:'大げさ料理エンタメ系', url:'https://www.tiktok.com/@cookingwithlynja' },
+    { label:'TikTok 最新順', kw:'#cookinghack', sub:'料理ハック最新' },
+    { label:'TikTok 最新順', kw:'#foodhack', sub:'フードハック最新' },
+    { label:'YouTube', kw:'cooking life hack 5 minute crafts', sub:'料理ハック元ネタ系', yt:true },
+    { label:'YouTube', kw:'food hack tutorial overly complicated', sub:'大げさ調理系', yt:true },
   ],
   diy: [
-    { label:'TikTok', kw:'DIY 天才すぎる', sub:'天才DIY系' },
-    { label:'TikTok', kw:'#diy 大げさ 修理', sub:'大げさ修理系' },
-    { label:'TikTok', kw:'これで解決 裏技 工具', sub:'工具裏技系' },
-    { label:'TikTok', kw:'#lifehack diy 意外な方法', sub:'意外な解決系' },
-    { label:'YouTube', kw:'overcomplicated diy fix', sub:'複雑DIY系', yt:true },
-    { label:'YouTube', kw:'diy hack funny fail', sub:'DIY失敗系', yt:true },
+    { label:'アカウント直リンク', kw:'Mr. Inventor', sub:'大げさDIY発明系', url:'https://www.tiktok.com/@mr.inventor0' },
+    { label:'アカウント直リンク', kw:'Blossom', sub:'大げさライフハック・工作系', url:'https://www.tiktok.com/@blossom' },
+    { label:'TikTok 最新順', kw:'#diyproject', sub:'DIYプロジェクト最新' },
+    { label:'TikTok 最新順', kw:'#crafthack', sub:'クラフト系ハック' },
+    { label:'YouTube', kw:'blossom diy hacks', sub:'Blossom系元ネタ', yt:true },
+    { label:'YouTube', kw:'diy life hack compilation overcomplicated', sub:'複雑DIY集', yt:true },
   ],
   cleaning: [
-    { label:'TikTok', kw:'掃除ハック これだけで', sub:'掃除ハック系' },
-    { label:'TikTok', kw:'#cleaninghacks すごい', sub:'掃除SNS系' },
-    { label:'TikTok', kw:'汚れ 落とし方 裏技', sub:'汚れ落とし系' },
-    { label:'TikTok', kw:'家事 天才的な方法', sub:'家事ハック系' },
-    { label:'YouTube', kw:'cleaning hack gone wrong', sub:'掃除失敗系', yt:true },
-    { label:'YouTube', kw:'unnecessarily complicated cleaning', sub:'複雑掃除系', yt:true },
+    { label:'アカウント直リンク', kw:'Cleantoker', sub:'大げさ掃除ハック系', url:'https://www.tiktok.com/@cleantoker' },
+    { label:'アカウント直リンク', kw:'Mrs. Hinch', sub:'大げさ掃除・片付け系', url:'https://www.tiktok.com/@mrshinchhome' },
+    { label:'TikTok 最新順', kw:'#cleaninghack', sub:'掃除ハック最新' },
+    { label:'TikTok 最新順', kw:'#cleantok', sub:'CleanTok最新' },
+    { label:'YouTube', kw:'cleaning hack 5 minute crafts', sub:'掃除ハック元ネタ', yt:true },
+    { label:'YouTube', kw:'cleaning life hack compilation funny', sub:'大げさ掃除集', yt:true },
   ],
   beauty: [
-    { label:'TikTok', kw:'メイク 裏技 これだけで', sub:'メイク裏技系' },
-    { label:'TikTok', kw:'#beautyhack 大げさ', sub:'美容ハック系' },
-    { label:'TikTok', kw:'ファッション 天才的な着こなし', sub:'ファッション系' },
-    { label:'TikTok', kw:'スキンケア これだけで変わる', sub:'スキンケア系' },
-    { label:'YouTube', kw:'beauty hack overcomplicated funny', sub:'複雑美容系', yt:true },
-    { label:'YouTube', kw:'fashion hack gone wrong', sub:'ファッション失敗系', yt:true },
+    { label:'アカウント直リンク', kw:'Troom Troom', sub:'大げさ美容・ファッションDIY', url:'https://www.tiktok.com/@troomtroom' },
+    { label:'アカウント直リンク', kw:'Blossom Beauty', sub:'大げさ美容ハック系', url:'https://www.tiktok.com/@blossombeauty' },
+    { label:'TikTok 最新順', kw:'#beautyhack', sub:'美容ハック最新' },
+    { label:'TikTok 最新順', kw:'#fashionhack', sub:'ファッションハック最新' },
+    { label:'YouTube', kw:'troom troom beauty hack', sub:'Troom Troom美容系', yt:true },
+    { label:'YouTube', kw:'beauty hack overcomplicated 5 minute', sub:'大げさ美容系', yt:true },
   ],
 };
 
@@ -351,18 +352,23 @@ function setCat(el, cat) {
 
 function renderSearchGrid() {
   const items = SEARCH_DATA[currentCat] || [];
-  document.getElementById('searchGrid').innerHTML = items.map((item, i) => `
-    <div class="search-item" onclick="doSearch(${i})">
-      <div class="search-item-label">${item.label}</div>
+  document.getElementById('searchGrid').innerHTML = items.map((item, i) => {
+    const isAccount = !!item.url;
+    const labelColor = isAccount ? '#f59e0b' : item.yt ? '#ff4444' : '#3b82f6';
+    return `
+    <div class="search-item" onclick="doSearch(${i})" style="${isAccount ? 'border-color:#2a2000;background:#1a1400;' : ''}">
+      <div class="search-item-label" style="color:${labelColor}">${isAccount ? '👤 ' : ''}${item.label}</div>
       <div class="search-item-kw">${esc(item.kw)}</div>
       <div class="search-item-sub">${esc(item.sub)}</div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function doSearch(i) {
   const item = SEARCH_DATA[currentCat][i];
-  if (item.yt) {
+  if (item.url) {
+    window.open(item.url, '_blank');
+  } else if (item.yt) {
     window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(item.kw)}`, '_blank');
   } else {
     window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(item.kw)}`, '_blank');
