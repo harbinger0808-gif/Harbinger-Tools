@@ -104,6 +104,20 @@
 
   .csv-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
+  /* Sheets連携 */
+  .sheets-setup { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .setup-label { font-size: 12px; color: #666; margin-bottom: 8px; }
+  .setup-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .setup-hint { font-size: 12px; color: #555; line-height: 1.6; }
+  .setup-hint.connected { color: #22c55e; font-weight: bold; }
+  .setup-steps { margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
+  .setup-step { font-size: 12px; color: #888; padding-left: 4px; }
+  .code-box { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px; margin-top: 10px; cursor: pointer; position: relative; transition: border-color 0.15s; }
+  .code-box:hover { border-color: #22c55e; }
+  .code-copy-hint { font-size: 11px; color: #555; margin-bottom: 6px; }
+  pre#scriptCode { font-size: 11px; color: #aaa; white-space: pre-wrap; word-break: break-all; line-height: 1.5; }
+  .sheets-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
   #toast { position: fixed; bottom: 20px; right: 20px; background: #22c55e; color: #fff; padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: bold; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; z-index: 999; }
   #toast.show { opacity: 1; transform: translateY(0); }
 
@@ -202,14 +216,60 @@
 
 <hr>
 
-<!-- CSV -->
+<!-- Google Sheets 自動連携 -->
 <div class="sec">
-  <div class="sec-title">スプシ出力</div>
-  <div class="csv-row">
+  <div class="sec-title">📊 Google Sheets 連携</div>
+
+  <!-- 設定エリア -->
+  <div class="sheets-setup" id="sheetsSetup">
+    <div class="setup-label">Apps Script URL（1回だけ設定）</div>
+    <div class="setup-row">
+      <input class="url-input" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." style="font-size:13px;" />
+      <button class="paste-btn" onclick="saveScriptUrl()" style="font-size:13px;padding:12px 14px;">保存</button>
+    </div>
+    <div class="setup-hint" id="setupHint">
+      ⚙️ まだ設定されていません。下の手順で設定してください。
+      <div class="setup-steps">
+        <div class="setup-step">① <a href="https://sheets.new" target="_blank" style="color:#4488ff;">sheets.new</a> で新規シートを作成</div>
+        <div class="setup-step">② メニュー「拡張機能」→「Apps Script」を開く</div>
+        <div class="setup-step">③ 下のコードをコピーして貼り付け → 保存（Ctrl+S）</div>
+        <div class="setup-step">④「デプロイ」→「新しいデプロイ」→ 種類:ウェブアプリ → アクセス:全員 → デプロイ</div>
+        <div class="setup-step">⑤ 表示されたURLをコピーして上の欄に貼り付け → 保存</div>
+      </div>
+      <div class="code-box" onclick="copyScript()">
+        <div class="code-copy-hint">クリックでコピー 📋</div>
+        <pre id="scriptCode">function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+    // ヘッダーがなければ追加
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['元動画URL','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日']);
+      sheet.getRange(1,1,1,7).setFontWeight('bold').setBackground('#222222').setFontColor('#ffffff');
+    }
+
+    sheet.appendRow([
+      data.url, data.memo, data.format,
+      data.score, data.checks, data.done, data.addedAt
+    ]);
+
+    return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
+  } catch(err) {
+    return ContentService.createTextOutput('ERROR: ' + err).setMimeType(ContentService.MimeType.TEXT);
+  }
+}</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 送信ボタン -->
+  <div class="sheets-actions">
+    <button class="btn btn-green" onclick="sendAllToSheets()">📊 全データをSheetsに送る</button>
     <button class="btn btn-g" onclick="copyCSV()">📋 CSVコピー</button>
     <button class="btn btn-g" onclick="dlCSV()">⬇️ ダウンロード</button>
-    <button class="btn btn-g" onclick="openSheets()">📊 Google Sheets</button>
   </div>
+  <div id="sendStatus" style="font-size:12px;color:#555;margin-top:8px;"></div>
 </div>
 
 <div id="toast"></div>
@@ -505,10 +565,68 @@ function copyCSV()   { navigator.clipboard.writeText(toCSV()).then(() => toast('
 function dlCSV()     { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + toCSV()], { type: 'text/csv;charset=utf-8;' })); a.download = `stitch_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
 function openSheets(){ window.open('https://sheets.new', '_blank'); setTimeout(copyCSV, 300); toast('SheetsにCtrl+Vで貼り付け'); }
 
+// ─ Google Sheets 連携 ─
+function saveScriptUrl() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  if (!url || !url.includes('script.google.com')) { toast('正しいURLを入力してください'); return; }
+  localStorage.setItem('apps_script_url', url);
+  updateSetupUI();
+  toast('✅ 保存しました！');
+}
+
+function updateSetupUI() {
+  const url = localStorage.getItem('apps_script_url');
+  const hint = document.getElementById('setupHint');
+  if (url) {
+    hint.className = 'setup-hint connected';
+    hint.innerHTML = '✅ 連携済み — ボタン1つでSheetsに送れます';
+    document.getElementById('scriptUrl').value = url;
+  }
+}
+
+async function sendAllToSheets() {
+  const scriptUrl = localStorage.getItem('apps_script_url');
+  if (!scriptUrl) { toast('先にApps Script URLを設定してください'); return; }
+  if (!videos.length) { toast('送るデータがありません'); return; }
+
+  const status = document.getElementById('sendStatus');
+  status.textContent = `送信中... (0/${videos.length})`;
+
+  let ok = 0, ng = 0;
+  for (let i = 0; i < videos.length; i++) {
+    const v = videos[i];
+    try {
+      await fetch(scriptUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: v.url, memo: v.memo, format: v.format,
+          score: `${v.checks.length}/6`,
+          checks: v.checks.join('・'),
+          done: v.done ? '済み' : '未撮影',
+          addedAt: v.addedAt
+        })
+      });
+      ok++;
+    } catch { ng++; }
+    status.textContent = `送信中... (${i+1}/${videos.length})`;
+  }
+
+  status.textContent = `✅ ${ok}件送信完了${ng ? ` (${ng}件失敗)` : ''}`;
+  toast(`${ok}件をSheetsに送りました！`);
+}
+
+function copyScript() {
+  const code = document.getElementById('scriptCode').textContent;
+  navigator.clipboard.writeText(code).then(() => toast('コードをコピーしました！'));
+}
+
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
 setPlatform('tiktok');
+updateSetupUI();
 render();
 </script>
 </body>
