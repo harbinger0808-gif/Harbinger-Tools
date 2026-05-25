@@ -155,6 +155,19 @@
   <div class="acc-grid" id="searchBtns"></div>
 </div>
 
+<!-- ① .5 元動画を特定する -->
+<div class="sec">
+  <div class="sec-title">🕵️ Khabyの元動画を特定する</div>
+  <div class="save-box">
+    <div class="quick-hint" style="margin-bottom:10px;">Khabyなどのリアクション動画URLを貼ると、元ネタを探す検索リンクを自動生成します</div>
+    <div class="url-row">
+      <input class="url-input" id="findUrl" placeholder="https://vt.tiktok.com/..." />
+      <button class="paste-btn" onclick="findOriginal()">元ネタを探す</button>
+    </div>
+    <div id="findResult" style="display:none; margin-top:14px;"></div>
+  </div>
+</div>
+
 <!-- ② URLを貼って保存 -->
 <div class="sec">
   <div class="sec-title">② 使えそうな動画を見つけたらURLを貼る</div>
@@ -564,6 +577,84 @@ function toCSV() {
 function copyCSV()   { navigator.clipboard.writeText(toCSV()).then(() => toast('CSVをコピー！')); }
 function dlCSV()     { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(['﻿' + toCSV()], { type: 'text/csv;charset=utf-8;' })); a.download = `stitch_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
 function openSheets(){ window.open('https://sheets.new', '_blank'); setTimeout(copyCSV, 300); toast('SheetsにCtrl+Vで貼り付け'); }
+
+// ─ 元ネタ特定 ─
+async function findOriginal() {
+  const url = document.getElementById('findUrl').value.trim();
+  if (!url) { toast('URLを入力してください'); return; }
+
+  const result = document.getElementById('findResult');
+  result.style.display = 'block';
+  result.innerHTML = '<div style="color:#555;font-size:13px;">取得中...</div>';
+
+  // oEmbedで動画情報を取得
+  let title = '', authorHandle = '', thumbnailUrl = '';
+  try {
+    const ep = `https://www.tiktok.com/oembed?url=${encodeURIComponent(url)}`;
+    const r = await fetch(ep);
+    const d = await r.json();
+    title = d.title || '';
+    authorHandle = (d.author_url?.match(/@([\w.]+)/) || [])[1] || '';
+    thumbnailUrl = d.thumbnail_url || '';
+  } catch {}
+
+  const cleanTitle = title.replace(/#\S+/g,'').replace(/@\S+/g,'').trim();
+  const videoId = url.match(/video\/(\d+)/)?.[1] || '';
+
+  // 検索クエリを生成
+  const searches = [
+    {
+      label: '🔍 Google — 元動画を検索',
+      desc: 'タイトルから元ネタ記事・Reddit等を探す',
+      url: `https://www.google.com/search?q=${encodeURIComponent('"' + cleanTitle + '" original video tiktok')}`,
+      color: '#4285f4'
+    },
+    {
+      label: '🔍 Google — 元クリエイターを検索',
+      desc: 'Khabyが反応した動画の投稿者を探す',
+      url: `https://www.google.com/search?q=${encodeURIComponent('khaby lame ' + cleanTitle + ' original creator')}`,
+      color: '#4285f4'
+    },
+    {
+      label: '🖼 Yandex — サムネイルで画像検索',
+      desc: 'GoogleよりYandexの方が元動画を見つけやすい',
+      url: thumbnailUrl ? `https://yandex.com/images/search?url=${encodeURIComponent(thumbnailUrl)}&rpt=imageview` : 'https://yandex.com/images/',
+      color: '#ff6b35'
+    },
+    {
+      label: '🔍 Reddit — 元動画の特定スレを探す',
+      desc: 'Redditにはよく元ネタ特定スレがある',
+      url: `https://www.reddit.com/search/?q=${encodeURIComponent('khaby lame ' + cleanTitle + ' original')}`,
+      color: '#ff4500'
+    },
+    {
+      label: '📱 TikTok — 同じ内容を検索',
+      desc: '同じ内容の動画をTikTokで直接探す',
+      url: `https://www.tiktok.com/search?q=${encodeURIComponent(cleanTitle)}`,
+      color: '#69c0ff'
+    },
+  ];
+
+  result.innerHTML = `
+    ${title ? `<div style="font-size:12px;color:#666;margin-bottom:10px;">「${esc(cleanTitle)}」の元ネタを探す</div>` : ''}
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+      ${searches.map(s => `
+        <a href="${esc(s.url)}" target="_blank" style="display:flex;align-items:center;gap:10px;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:11px 14px;text-decoration:none;transition:border-color 0.15s;" onmouseover="this.style.borderColor='${s.color}'" onmouseout="this.style.borderColor='#2a2a2a'">
+          <div>
+            <div style="font-size:13px;font-weight:bold;color:${s.color};">${s.label}</div>
+            <div style="font-size:11px;color:#555;margin-top:2px;">${s.desc}</div>
+          </div>
+          <span style="margin-left:auto;color:#333;font-size:16px;">→</span>
+        </a>`).join('')}
+    </div>
+    <div style="background:#150d00;border:1px solid #f59e0b;border-radius:10px;padding:12px;font-size:12px;color:#bbb;line-height:1.7;">
+      <b style="color:#f59e0b;">⚡ Yandexで確実に見つける方法</b><br>
+      ① Khabyの動画を開く<br>
+      ② 最初の1〜2秒（Khabyが映る<b>前</b>）で一時停止<br>
+      ③ ⌘+Shift+4 でその部分だけスクショ<br>
+      ④ <a href="https://yandex.com/images/" target="_blank" style="color:#f59e0b;">yandex.com/images</a> を開いてスクショをドラッグ
+    </div>`;
+}
 
 // ─ Google Sheets 連携 ─
 function saveScriptUrl() {
