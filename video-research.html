@@ -85,6 +85,17 @@
   .search-item-sub { font-size: 11px; color: #555; margin-top: 3px; }
   .custom-search { display: flex; gap: 8px; margin-top: 12px; }
 
+  /* ③ 元動画を探す */
+  .find-label { font-size: 14px; font-weight: bold; margin-bottom: 4px; }
+  .find-hint { font-size: 12px; color: #555; }
+  .account-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media(max-width:480px){ .account-grid { grid-template-columns: 1fr; } }
+  .acc-card { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; cursor: pointer; transition: all 0.15s; }
+  .acc-card:hover { border-color: #ff4444; background: #150808; }
+  .acc-name { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+  .acc-desc { font-size: 12px; color: #888; margin-bottom: 6px; line-height: 1.4; }
+  .acc-tag  { font-size: 11px; color: #ff4444; font-weight: bold; }
+
   /* ④ 登録フォーム */
   .form-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
   .fl { font-size: 12px; color: #666; }
@@ -186,32 +197,74 @@
   </div>
 </div>
 
-<!-- ③ 素材を直接探す -->
+<!-- ③ 元動画を探す -->
 <div class="section">
   <div class="sec-head">
     <div class="sec-num">3</div>
-    <div class="sec-title">Reaction素材を直接探す</div>
-    <div class="sec-sub">Stitch候補を発掘</div>
+    <div class="sec-title">元動画を探す</div>
+    <div class="sec-sub">Stitch素材を発掘</div>
   </div>
   <div class="box">
-    <!-- カテゴリ -->
-    <div class="search-cats" id="cats">
-      <div class="cat-btn active" onclick="setCat(this,'lifehack')">💡 ライフハック</div>
-      <div class="cat-btn" onclick="setCat(this,'cooking')">🍳 料理・食</div>
-      <div class="cat-btn" onclick="setCat(this,'diy')">🔨 DIY・修理</div>
-      <div class="cat-btn" onclick="setCat(this,'cleaning')">🧹 掃除・片付け</div>
-      <div class="cat-btn" onclick="setCat(this,'beauty')">💄 美容・ファッション</div>
-    </div>
 
-    <!-- 検索ボタングリッド -->
-    <div class="search-grid" id="searchGrid"></div>
+    <!-- 3-A: 冒頭を説明して検索 -->
+    <div class="find-label">🔎 冒頭に何が映ってるか入力 → 一括検索</div>
+    <div class="find-hint">例）「卵を変な器具で割ってる」「掃除をすごい手順でやってる」</div>
+    <textarea id="descInput" placeholder="冒頭の映像を日本語で説明してください..." style="min-height:70px;margin-top:10px;"></textarea>
+    <button class="btn btn-red btn-full" style="margin-top:10px;" onclick="descSearch()">🔍 TikTok・YouTube・Googleを一括検索</button>
 
-    <!-- カスタム検索 -->
-    <div class="divider">— または自分でキーワード入力 —</div>
-    <div class="custom-search">
-      <input type="text" id="customKw" placeholder="キーワードを入力（例：すごい包丁さばき）" onkeydown="if(event.key==='Enter')customSearch()" />
-      <button class="btn btn-red btn-sm" onclick="customSearch()">TikTok</button>
-      <button class="btn btn-gray btn-sm" onclick="customSearchYT()">YouTube</button>
+    <div class="divider" style="margin:20px 0 16px;">— または 素材が多い有名アカウントから探す —</div>
+
+    <!-- 3-B: 元ネタ量産アカウント一覧 -->
+    <div class="account-grid">
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/@5minutecrafts','_blank')">
+        <div class="acc-name">5 Minute Crafts</div>
+        <div class="acc-desc">超大げさライフハックの代表格。Khabyが最多反応</div>
+        <div class="acc-tag">フォロワー8000万+</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/@blossom','_blank')">
+        <div class="acc-name">Blossom</div>
+        <div class="acc-desc">DIY・料理・ライフハックの大げさ動画量産</div>
+        <div class="acc-tag">フォロワー2000万+</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.youtube.com/@5-MinuteCrafts','_blank')">
+        <div class="acc-name">5MC (YouTube)</div>
+        <div class="acc-desc">YouTube版。素材の宝庫・毎日投稿</div>
+        <div class="acc-tag">YouTube 8000万人</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/@troomtroom','_blank')">
+        <div class="acc-name">Troom Troom</div>
+        <div class="acc-desc">美容・ファッション系の大げさDIY</div>
+        <div class="acc-tag">フォロワー500万+</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/search?q=%235minutecrafts&type=1','_blank')">
+        <div class="acc-name">#5minutecrafts タグ</div>
+        <div class="acc-desc">タグ検索で最新素材を探す</div>
+        <div class="acc-tag">TikTok 最新順</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/search?q=%23lifehackvideo&type=1','_blank')">
+        <div class="acc-name">#lifehackvideo タグ</div>
+        <div class="acc-desc">ライフハック動画タグ・最新から探す</div>
+        <div class="acc-tag">TikTok 最新順</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.youtube.com/results?search_query=5+minute+crafts+life+hack+2024&sp=CAI%253D','_blank')">
+        <div class="acc-name">YouTube 新着検索</div>
+        <div class="acc-desc">5MC系の新着動画を日付順で探す</div>
+        <div class="acc-tag">YouTube 新着順</div>
+      </div>
+
+      <div class="acc-card" onclick="window.open('https://www.tiktok.com/search?q=%23diyproject&type=1','_blank')">
+        <div class="acc-name">#diyproject タグ</div>
+        <div class="acc-desc">DIY系の最新投稿から探す</div>
+        <div class="acc-tag">TikTok 最新順</div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -297,94 +350,35 @@
 // ============================
 // 検索データ
 // ============================
-// ※ Khabyが「反応する側」のコンテンツ → 元ネタ系クリエイターに直接飛ぶ
-const SEARCH_DATA = {
-  lifehack: [
-    { label:'アカウント直リンク', kw:'5 Minute Crafts', sub:'Khabyが最多反応するチャンネル', url:'https://www.tiktok.com/@5minutecrafts' },
-    { label:'アカウント直リンク', kw:'Craft Factory', sub:'大げさDIY・ライフハック系', url:'https://www.tiktok.com/@craftyfarm' },
-    { label:'TikTok 最新順', kw:'#5minutecrafts', sub:'最新投稿から探す（Khaby除外しやすい）' },
-    { label:'TikTok 最新順', kw:'#lifehackvideo', sub:'ライフハック最新' },
-    { label:'YouTube', kw:'5 minute crafts life hack', sub:'元ネタの宝庫', yt:true },
-    { label:'YouTube', kw:'simple life hack tutorial funny', sub:'大げさ手順系', yt:true },
-  ],
-  cooking: [
-    { label:'アカウント直リンク', kw:'Nino\'s Home', sub:'大げさ料理パフォーマンス系', url:'https://www.tiktok.com/@ninouhome' },
-    { label:'アカウント直リンク', kw:'Cooking With Lynja', sub:'大げさ料理エンタメ系', url:'https://www.tiktok.com/@cookingwithlynja' },
-    { label:'TikTok 最新順', kw:'#cookinghack', sub:'料理ハック最新' },
-    { label:'TikTok 最新順', kw:'#foodhack', sub:'フードハック最新' },
-    { label:'YouTube', kw:'cooking life hack 5 minute crafts', sub:'料理ハック元ネタ系', yt:true },
-    { label:'YouTube', kw:'food hack tutorial overly complicated', sub:'大げさ調理系', yt:true },
-  ],
-  diy: [
-    { label:'アカウント直リンク', kw:'Mr. Inventor', sub:'大げさDIY発明系', url:'https://www.tiktok.com/@mr.inventor0' },
-    { label:'アカウント直リンク', kw:'Blossom', sub:'大げさライフハック・工作系', url:'https://www.tiktok.com/@blossom' },
-    { label:'TikTok 最新順', kw:'#diyproject', sub:'DIYプロジェクト最新' },
-    { label:'TikTok 最新順', kw:'#crafthack', sub:'クラフト系ハック' },
-    { label:'YouTube', kw:'blossom diy hacks', sub:'Blossom系元ネタ', yt:true },
-    { label:'YouTube', kw:'diy life hack compilation overcomplicated', sub:'複雑DIY集', yt:true },
-  ],
-  cleaning: [
-    { label:'アカウント直リンク', kw:'Cleantoker', sub:'大げさ掃除ハック系', url:'https://www.tiktok.com/@cleantoker' },
-    { label:'アカウント直リンク', kw:'Mrs. Hinch', sub:'大げさ掃除・片付け系', url:'https://www.tiktok.com/@mrshinchhome' },
-    { label:'TikTok 最新順', kw:'#cleaninghack', sub:'掃除ハック最新' },
-    { label:'TikTok 最新順', kw:'#cleantok', sub:'CleanTok最新' },
-    { label:'YouTube', kw:'cleaning hack 5 minute crafts', sub:'掃除ハック元ネタ', yt:true },
-    { label:'YouTube', kw:'cleaning life hack compilation funny', sub:'大げさ掃除集', yt:true },
-  ],
-  beauty: [
-    { label:'アカウント直リンク', kw:'Troom Troom', sub:'大げさ美容・ファッションDIY', url:'https://www.tiktok.com/@troomtroom' },
-    { label:'アカウント直リンク', kw:'Blossom Beauty', sub:'大げさ美容ハック系', url:'https://www.tiktok.com/@blossombeauty' },
-    { label:'TikTok 最新順', kw:'#beautyhack', sub:'美容ハック最新' },
-    { label:'TikTok 最新順', kw:'#fashionhack', sub:'ファッションハック最新' },
-    { label:'YouTube', kw:'troom troom beauty hack', sub:'Troom Troom美容系', yt:true },
-    { label:'YouTube', kw:'beauty hack overcomplicated 5 minute', sub:'大げさ美容系', yt:true },
-  ],
-};
 
-let currentCat = 'lifehack';
+// ============================
+// ③ 説明文から一括検索
+// ============================
+function descSearch() {
+  const desc = document.getElementById('descInput').value.trim();
+  if (!desc) { toast('冒頭の映像を説明してください'); return; }
 
-function setCat(el, cat) {
-  document.querySelectorAll('.cat-btn').forEach(e => e.classList.remove('active'));
-  el.classList.add('active');
-  currentCat = cat;
-  renderSearchGrid();
-}
+  // 英語キーワードを自動生成（シンプルな変換）
+  const enKw = desc
+    .replace(/卵/g,'egg').replace(/料理/g,'cooking').replace(/掃除/g,'cleaning')
+    .replace(/ライフハック/g,'life hack').replace(/裏技/g,'hack trick')
+    .replace(/大げさ/g,'overcomplicated').replace(/変な/g,'weird unusual')
+    .replace(/すごい/g,'amazing').replace(/切る/g,'cutting').replace(/洗う/g,'washing');
 
-function renderSearchGrid() {
-  const items = SEARCH_DATA[currentCat] || [];
-  document.getElementById('searchGrid').innerHTML = items.map((item, i) => {
-    const isAccount = !!item.url;
-    const labelColor = isAccount ? '#f59e0b' : item.yt ? '#ff4444' : '#3b82f6';
-    return `
-    <div class="search-item" onclick="doSearch(${i})" style="${isAccount ? 'border-color:#2a2000;background:#1a1400;' : ''}">
-      <div class="search-item-label" style="color:${labelColor}">${isAccount ? '👤 ' : ''}${item.label}</div>
-      <div class="search-item-kw">${esc(item.kw)}</div>
-      <div class="search-item-sub">${esc(item.sub)}</div>
-    </div>`;
-  }).join('');
-}
+  const queries = [
+    { url: `https://www.tiktok.com/search?q=${encodeURIComponent(desc)}`, label:'TikTok（日本語）' },
+    { url: `https://www.tiktok.com/search?q=${encodeURIComponent(desc + ' hack tutorial')}`, label:'TikTok（ハック系）' },
+    { url: `https://www.youtube.com/results?search_query=${encodeURIComponent(desc + ' life hack')}`, label:'YouTube（日本語）' },
+    { url: `https://www.youtube.com/results?search_query=${encodeURIComponent(enKw + ' life hack tutorial')}`, label:'YouTube（英語）' },
+    { url: `https://www.google.com/search?q=${encodeURIComponent(desc + ' TikTok ライフハック 動画')}`, label:'Google検索' },
+  ];
 
-function doSearch(i) {
-  const item = SEARCH_DATA[currentCat][i];
-  if (item.url) {
-    window.open(item.url, '_blank');
-  } else if (item.yt) {
-    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(item.kw)}`, '_blank');
-  } else {
-    window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(item.kw)}`, '_blank');
-  }
-}
+  // 少し間隔をあけて開く（ポップアップブロック回避）
+  queries.forEach((q, i) => {
+    setTimeout(() => window.open(q.url, '_blank'), i * 300);
+  });
 
-function customSearch() {
-  const kw = document.getElementById('customKw').value.trim();
-  if (!kw) { toast('キーワードを入力してください'); return; }
-  window.open(`https://www.tiktok.com/search?q=${encodeURIComponent(kw)}`, '_blank');
-}
-
-function customSearchYT() {
-  const kw = document.getElementById('customKw').value.trim();
-  if (!kw) { toast('キーワードを入力してください'); return; }
-  window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(kw)}`, '_blank');
+  toast(`${queries.length}つのタブで検索中...`);
 }
 
 // ============================
@@ -582,7 +576,6 @@ function toast(msg) { const t=document.getElementById('toast'); t.textContent=ms
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 // 初期化
-renderSearchGrid();
 render();
 </script>
 </body>
