@@ -890,9 +890,30 @@ function cleanTitle(t) {
   return t.replace(/#\S+/g,'').replace(/@\S+/g,'').trim();
 }
 
+let deletedSaito = new Set(JSON.parse(localStorage.getItem('deleted_saito') || '[]'));
+
+function deleteSaito(i) {
+  deletedSaito.add(i);
+  localStorage.setItem('deleted_saito', JSON.stringify([...deletedSaito]));
+  renderSaito();
+  toast('削除しました');
+}
+
+function resetSaito() {
+  deletedSaito.clear();
+  localStorage.removeItem('deleted_saito');
+  renderSaito();
+  toast('リストをリセットしました');
+}
+
 function renderSaito() {
   const el = document.getElementById('saitoList');
-  el.innerHTML = SAITO_LIST.map((v, i) => `
+  const items = SAITO_LIST.map((v, i) => ({ v, i })).filter(({ i }) => !deletedSaito.has(i));
+  if (!items.length) {
+    el.innerHTML = `<div style="text-align:center;color:#333;padding:20px;font-size:13px;">全部削除済み <button onclick="resetSaito()" style="margin-left:8px;background:#1e1e1e;border:1px solid #333;color:#aaa;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;">リセット</button></div>`;
+    return;
+  }
+  el.innerHTML = items.map(({ v, i }) => `
     <div class="saito-item">
       <div class="saito-num">${i+1}</div>
       <div class="saito-title">
@@ -904,6 +925,7 @@ function renderSaito() {
         <a class="s-btn s-find" href="https://www.google.com/search?q=${encodeURIComponent(v.q)}" target="_blank">🔍 元ネタを探す</a>
         <a class="s-btn s-find" href="https://www.tiktok.com/search?q=${encodeURIComponent(cleanTitle(v.title))}" target="_blank" style="border-color:#69c0ff;color:#69c0ff;background:#08101a;">📱 TikTok</a>
         <button class="s-btn s-add" onclick="addFromSaito(${i})">＋</button>
+        <button class="s-btn" onclick="deleteSaito(${i})" style="background:#1a0000;border:1px solid #444;color:#666;">🗑</button>
       </div>
     </div>`).join('');
 }
