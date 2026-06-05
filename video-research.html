@@ -255,7 +255,21 @@
       <div class="fmt" onclick="selFmt(this,'📌 未定')">📌 未定</div>
     </div>
 
-    <textarea class="memo-input" id="memoInput" placeholder="メモ：どんな内容か・どう反応するか（省略OK）"></textarea>
+    <!-- 動画の内容 -->
+    <div class="fmt-label" style="margin-bottom:6px;">📹 動画の内容（何が起きてるか）</div>
+    <textarea class="memo-input" id="contentInput" placeholder="例：男が車のドアにシャツが挟まりハサミで切ろうとしている" style="margin-bottom:14px;"></textarea>
+
+    <!-- 必要な撮影素材 -->
+    <div class="fmt-label" style="margin-bottom:6px;">🎒 必要な撮影素材・道具</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <input class="url-input" id="matInput" placeholder="例：バケツ、黒パーカー、屋外" style="font-size:13px;" onkeydown="if(event.key==='Enter'){addMat();event.preventDefault()}" />
+      <button class="paste-btn" onclick="addMat()" style="padding:12px 14px;font-size:13px;">追加</button>
+    </div>
+    <div id="matTags" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;min-height:20px;"></div>
+
+    <!-- メモ -->
+    <div class="fmt-label" style="margin-bottom:6px;">📝 メモ（任意）</div>
+    <textarea class="memo-input" id="memoInput" placeholder="その他メモ" style="margin-bottom:14px;"></textarea>
 
     <div class="fmt-label" style="margin-bottom:8px;">再現チェック（当てはまるものを選ぶ）</div>
     <div class="cps">
@@ -322,15 +336,14 @@
     const data = JSON.parse(e.postData.contents);
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-    // ヘッダーがなければ追加
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(['元動画URL','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日']);
-      sheet.getRange(1,1,1,7).setFontWeight('bold').setBackground('#222222').setFontColor('#ffffff');
+      sheet.appendRow(['元動画URL','動画の内容','必要な素材','メモ','フォーマット','再現スコア','再現条件','撮影済み','登録日']);
+      sheet.getRange(1,1,1,9).setFontWeight('bold').setBackground('#222222').setFontColor('#ffffff');
     }
 
     sheet.appendRow([
-      data.url, data.memo, data.format,
-      data.score, data.checks, data.done, data.addedAt
+      data.url, data.content, data.materials, data.memo,
+      data.format, data.score, data.checks, data.done, data.addedAt
     ]);
 
     return ContentService.createTextOutput('OK').setMimeType(ContentService.MimeType.TEXT);
@@ -559,29 +572,83 @@ function selFmt(el, fmt) {
   selectedFmt = fmt;
 }
 
+let currentMats = [];
+
+function addMat() {
+  const input = document.getElementById('matInput');
+  const val = input.value.trim();
+  if (!val) return;
+  val.split(/[,、，]/).map(s => s.trim()).filter(Boolean).forEach(s => {
+    if (!currentMats.includes(s)) currentMats.push(s);
+  });
+  input.value = '';
+  renderMats();
+}
+
+function removeMat(m) {
+  currentMats = currentMats.filter(x => x !== m);
+  renderMats();
+}
+
+function renderMats() {
+  document.getElementById('matTags').innerHTML = currentMats.map(m => `
+    <span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:20px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:5px;">
+      ${esc(m)}<span onclick="removeMat('${esc(m)}')" style="cursor:pointer;color:#888;">✕</span>
+    </span>`).join('');
+}
+
 function addVideo() {
   const url = document.getElementById('urlInput').value.trim();
   if (!url) { toast('URLを入力してください'); return; }
   const checks = [...document.querySelectorAll('.cp.on')].map(e => e.dataset.v);
-  videos.unshift({
+  const v = {
     id: Date.now(),
     url,
+    content: document.getElementById('contentInput').value.trim(),
+    materials: [...currentMats],
     memo: document.getElementById('memoInput').value.trim(),
     format: selectedFmt || '📌 未定',
     checks,
     done: false,
     addedAt: new Date().toLocaleDateString('ja-JP')
-  });
+  };
+  videos.unshift(v);
   save(); resetForm(); render();
+  // 自動でSheetsに送信
+  autoSendToSheets(v);
   toast('追加しました！');
 }
 
 function resetForm() {
   document.getElementById('urlInput').value = '';
+  document.getElementById('contentInput').value = '';
   document.getElementById('memoInput').value = '';
+  currentMats = [];
+  renderMats();
   document.querySelectorAll('.fmt').forEach(e => e.classList.remove('sel'));
   document.querySelectorAll('.cp').forEach(e => e.classList.remove('on'));
   selectedFmt = '';
+}
+
+async function autoSendToSheets(v) {
+  const scriptUrl = localStorage.getItem('apps_script_url');
+  if (!scriptUrl) return;
+  try {
+    await fetch(scriptUrl, {
+      method: 'POST', mode: 'no-cors',
+      body: JSON.stringify({
+        url: v.url,
+        content: v.content,
+        materials: v.materials.join('・'),
+        memo: v.memo,
+        format: v.format,
+        score: `${v.checks.length}/6`,
+        checks: v.checks.join('・'),
+        done: v.done ? '済み' : '未撮影',
+        addedAt: v.addedAt
+      })
+    });
+  } catch {}
 }
 
 function setF(f, el) {
@@ -629,6 +696,8 @@ function render() {
         <div class="card-score">${v.checks.length}/6</div>
       </div>
       <div class="card-url"><a href="${esc(v.url)}" target="_blank">${v.url.length > 58 ? esc(v.url.slice(0,58)) + '…' : esc(v.url)}</a></div>
+      ${v.content ? `<div style="font-size:12px;color:#aaa;margin-bottom:5px;">📹 ${esc(v.content)}</div>` : ''}
+      ${v.materials && v.materials.length ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${v.materials.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:20px;padding:2px 9px;font-size:11px;">🎒 ${esc(m)}</span>`).join('')}</div>` : ''}
       ${v.memo ? `<div class="card-memo">${esc(v.memo)}</div>` : ''}
       <div class="card-tags">
         <span class="tag tag-f">${esc(v.format)}</span>
