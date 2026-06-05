@@ -167,6 +167,16 @@
 <h1>🎬 Stitch素材リサーチ</h1>
 <p class="sub">元ネタを見つけてURLを貼るだけ → 撮影リスト管理</p>
 
+<!-- 🤖 AI厳選リスト -->
+<div class="sec">
+  <div class="sec-title">🤖 AI厳選 — 今すぐ撮れるトップ20</div>
+  <div style="font-size:12px;color:#555;margin-bottom:8px;">道具少・1人OK・準備ゼロで撮れる順に並んでる。10本追加するたびに次の候補に切り替わる。</div>
+  <div id="aiProgress" style="margin-bottom:12px;"></div>
+  <div id="aiList"></div>
+</div>
+
+<hr style="border-color:#181818;margin:24px 0;">
+
 <!-- 📋 さいとうたかし厳選21本 -->
 <div class="sec">
   <div class="sec-title">📋 さいとうたかし 厳選21本 — Khabyパロディ候補</div>
@@ -547,7 +557,7 @@ let videos = JSON.parse(localStorage.getItem('stitch_list') || '[]');
 let currentFilter = 'all';
 let selectedFmt = '';
 
-function save() { localStorage.setItem('stitch_list', JSON.stringify(videos)); }
+function save() { localStorage.setItem('stitch_list', JSON.stringify(videos)); renderAI(); }
 
 // クリップボードから貼り付け
 async function pasteFromClipboard() {
@@ -860,6 +870,98 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
 // ─────────────────────────────────────────
+// AI厳選スコアリング（道具少・1人OK・準備ゼロ順）
+// ─────────────────────────────────────────
+// score: 5=最高（道具なし・1人・屋内）, 1=難しい（小道具多・屋外・複数人）
+const AI_POOL = [
+  // さいとう21本
+  { src:'saito', i:16, title:'Changing my signature', hint:'ポーズだけ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rTEGo/' },
+  { src:'saito', i:6,  title:'I saw you man 👀', hint:'見られてるシチュ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rhSAe/' },
+  { src:'saito', i:12, title:'My bad, I was training 🥷🏾', hint:'ポーズ・動きだけ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rUVRf/' },
+  { src:'saito', i:4,  title:'It happens every time 🥲', hint:'繰り返し動作 → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5MCyFF/' },
+  { src:'saito', i:20, title:'I promise it works', hint:'失敗するだけ → 道具最小', score:5, url:'https://vt.tiktok.com/ZSx5hnCT3/' },
+  { src:'saito', i:9,  title:'Sorry teacher, phone 📱', hint:'スマホ1台でOK', score:5, url:'https://vt.tiktok.com/ZSx5rhJXt/' },
+  { src:'saito', i:7,  title:'Maybe tomorrow…', hint:'何もしない系 → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rMJAR/' },
+  { src:'saito', i:11, title:'You can try it this way too', hint:'動き・ジェスチャーだけ', score:4, url:'https://vt.tiktok.com/ZSx5rQq9C/' },
+  { src:'saito', i:5,  title:'Here some options 👍🏿', hint:'動き・ジェスチャーだけ', score:4, url:'https://vt.tiktok.com/ZSx5MwW5P/' },
+  { src:'saito', i:17, title:'So… is this how they work???🤔', hint:'小道具1個あれば充分', score:4, url:'https://vt.tiktok.com/ZSx5hXEbL/' },
+  { src:'saito', i:14, title:'Express delivery 🔥📦', hint:'箱1個あれば撮れる', score:4, url:'https://vt.tiktok.com/ZSx5hRCGT/' },
+  { src:'saito', i:15, title:'Someone help the cameraman 📷', hint:'カメラ（スマホ）だけ', score:4, url:'https://vt.tiktok.com/ZSx5rvmYe/' },
+  { src:'saito', i:18, title:'Toilets not comfortable 🤲🏾', hint:'トイレあれば撮れる（屋内）', score:4, url:'https://vt.tiktok.com/ZSx5hPqCg/' },
+  { src:'saito', i:1,  title:'Very refreshing 👍🏿', hint:'飲み物1本でOK', score:4, url:'https://vt.tiktok.com/ZSx5M2rdS/' },
+  { src:'saito', i:3,  title:'My bad, save your life 💀', hint:'小道具少なめ', score:3, url:'https://vt.tiktok.com/ZSx5M6vYa/' },
+  { src:'saito', i:8,  title:'I got you bro 👍🏿', hint:'2人いれば撮れる', score:3, url:'https://vt.tiktok.com/ZSx5rYN3G/' },
+  { src:'saito', i:0,  title:'Must be the wind 👀', hint:'屋外・風があるシーン', score:3, url:'https://vt.tiktok.com/ZSx5MR78S/' },
+  { src:'saito', i:10, title:'Level ♾️', hint:'アイデア次第', score:3, url:'https://vt.tiktok.com/ZSx5rsLFg/' },
+  // Khaby DB
+  { src:'khaby', i:9,  title:'マグカップの取っ手にマスクが挟まった', hint:'マグカップ+マスクだけ', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+mask+mug+handle' },
+  { src:'khaby', i:5,  title:'バナナを包丁で切る', hint:'バナナ+包丁だけ', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+banana+knife' },
+  { src:'khaby', i:4,  title:'Tシャツがドアに挟まった', hint:'ドア+シャツだけ', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+shirt+car+door' },
+  { src:'khaby', i:2,  title:'ドアを足でブロック', hint:'ドアと2人でOK', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+door+blocked' },
+];
+
+let aiPage = 0; // 0=1〜20本目, 1=21〜40本目...
+
+function renderAI() {
+  const added = videos.length;
+  const page = Math.floor(added / 10);
+  aiPage = page;
+
+  // プログレスバー
+  const progress = added % 10;
+  const nextAt = (page + 1) * 10;
+  document.getElementById('aiProgress').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="flex:1;background:#1a1a1a;border-radius:10px;height:6px;overflow:hidden;">
+        <div style="width:${progress*10}%;background:#f59e0b;height:100%;border-radius:10px;transition:width 0.3s;"></div>
+      </div>
+      <div style="font-size:11px;color:#555;">${progress}/10 → あと${10-progress}本追加で次の候補へ</div>
+    </div>
+    <div style="font-size:11px;color:#f59e0b;">現在 第${page+1}セット（${page*20+1}〜${Math.min((page+1)*20, AI_POOL.length)}本目）</div>`;
+
+  // 表示する20本
+  const sorted = [...AI_POOL].sort((a,b) => b.score - a.score);
+  const start = (page % Math.ceil(AI_POOL.length/20)) * 20;
+  const items = sorted.slice(start, start+20);
+
+  const el = document.getElementById('aiList');
+  if (!items.length) { el.innerHTML = '<div style="color:#333;text-align:center;padding:16px;">全候補を表示済み</div>'; return; }
+
+  el.innerHTML = items.map((v, idx) => `
+    <div class="saito-item" style="border-color:${v.score>=5?'#1a2a00':v.score>=4?'#1a1a00':'#1a1a1a'};">
+      <div class="saito-num" style="color:${v.score>=5?'#22c55e':v.score>=4?'#f59e0b':'#888'};">${'★'.repeat(v.score)}</div>
+      <div class="saito-title">
+        <div>${esc(v.title)}</div>
+        <div style="font-size:11px;color:#444;margin-top:2px;">${esc(v.hint)}</div>
+      </div>
+      <div class="saito-btns">
+        <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁 見る</a>
+        <button class="s-btn s-add" onclick="addFromAI(${idx})">＋ 追加</button>
+      </div>
+    </div>`).join('');
+}
+
+function addFromAI(idx) {
+  const sorted = [...AI_POOL].sort((a,b) => b.score - a.score);
+  const start = (aiPage % Math.ceil(AI_POOL.length/20)) * 20;
+  const v = sorted[start + idx];
+  if (!v) return;
+  videos.unshift({
+    id: Date.now(),
+    url: v.url,
+    content: v.hint,
+    materials: [],
+    memo: `【AI厳選★${v.score}】${v.title}`,
+    format: '✅ シンプルにやる',
+    checks: [],
+    done: false,
+    addedAt: new Date().toLocaleDateString('ja-JP')
+  });
+  save(); render(); renderAI();
+  toast(`「${v.title}」を追加！`);
+}
+
+// ─────────────────────────────────────────
 // さいとうたかし厳選21本
 // ─────────────────────────────────────────
 const SAITO_LIST = [
@@ -1113,6 +1215,7 @@ if (!localStorage.getItem('apps_script_url')) {
 setPlatform('tiktok');
 updateSetupUI();
 render();
+renderAI();
 renderSaito();
 renderKhaby();
 </script>
