@@ -869,30 +869,76 @@ function toast(msg) { const t = document.getElementById('toast'); t.textContent 
 // ─────────────────────────────────────────
 // score: 5=最高（道具なし・1人・屋内）, 1=難しい（小道具多・屋外・複数人）
 const AI_POOL = [
-  // さいとう21本
-  { src:'saito', i:16, title:'Changing my signature', hint:'ポーズだけ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rTEGo/' },
-  { src:'saito', i:6,  title:'I saw you man 👀', hint:'見られてるシチュ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rhSAe/' },
-  { src:'saito', i:12, title:'My bad, I was training 🥷🏾', hint:'ポーズ・動きだけ → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rUVRf/' },
-  { src:'saito', i:4,  title:'It happens every time 🥲', hint:'繰り返し動作 → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5MCyFF/' },
-  { src:'saito', i:20, title:'I promise it works', hint:'失敗するだけ → 道具最小', score:5, url:'https://vt.tiktok.com/ZSx5hnCT3/' },
-  { src:'saito', i:9,  title:'Sorry teacher, phone 📱', hint:'スマホ1台でOK', score:5, url:'https://vt.tiktok.com/ZSx5rhJXt/' },
-  { src:'saito', i:7,  title:'Maybe tomorrow…', hint:'何もしない系 → 道具ゼロ', score:5, url:'https://vt.tiktok.com/ZSx5rMJAR/' },
-  { src:'saito', i:11, title:'You can try it this way too', hint:'動き・ジェスチャーだけ', score:4, url:'https://vt.tiktok.com/ZSx5rQq9C/' },
-  { src:'saito', i:5,  title:'Here some options 👍🏿', hint:'動き・ジェスチャーだけ', score:4, url:'https://vt.tiktok.com/ZSx5MwW5P/' },
-  { src:'saito', i:17, title:'So… is this how they work???🤔', hint:'小道具1個あれば充分', score:4, url:'https://vt.tiktok.com/ZSx5hXEbL/' },
-  { src:'saito', i:14, title:'Express delivery 🔥📦', hint:'箱1個あれば撮れる', score:4, url:'https://vt.tiktok.com/ZSx5hRCGT/' },
-  { src:'saito', i:15, title:'Someone help the cameraman 📷', hint:'カメラ（スマホ）だけ', score:4, url:'https://vt.tiktok.com/ZSx5rvmYe/' },
-  { src:'saito', i:18, title:'Toilets not comfortable 🤲🏾', hint:'トイレあれば撮れる（屋内）', score:4, url:'https://vt.tiktok.com/ZSx5hPqCg/' },
-  { src:'saito', i:1,  title:'Very refreshing 👍🏿', hint:'飲み物1本でOK', score:4, url:'https://vt.tiktok.com/ZSx5M2rdS/' },
-  { src:'saito', i:3,  title:'My bad, save your life 💀', hint:'小道具少なめ', score:3, url:'https://vt.tiktok.com/ZSx5M6vYa/' },
-  { src:'saito', i:8,  title:'I got you bro 👍🏿', hint:'2人いれば撮れる', score:3, url:'https://vt.tiktok.com/ZSx5rYN3G/' },
-  { src:'saito', i:0,  title:'Must be the wind 👀', hint:'屋外・風があるシーン', score:3, url:'https://vt.tiktok.com/ZSx5MR78S/' },
-  { src:'saito', i:10, title:'Level ♾️', hint:'アイデア次第', score:3, url:'https://vt.tiktok.com/ZSx5rsLFg/' },
-  // Khaby DB
-  { src:'khaby', i:9,  title:'マグカップの取っ手にマスクが挟まった', hint:'マグカップ+マスクだけ', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+mask+mug+handle' },
-  { src:'khaby', i:5,  title:'バナナを包丁で切る', hint:'バナナ+包丁だけ', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+banana+knife' },
-  { src:'khaby', i:4,  title:'Tシャツがドアに挟まった', hint:'ドア+シャツだけ', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+shirt+car+door' },
-  { src:'khaby', i:2,  title:'ドアを足でブロック', hint:'ドアと2人でOK', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+door+blocked' },
+  // ★★★★★ 道具ゼロ・1人・どこでも
+  { src:'saito', i:16, title:'Changing my signature', score:5, url:'https://vt.tiktok.com/ZSx5rTEGo/',
+    desc:'Khabyがいつもやる「両手を広げるドヤポーズ」を別のポーズに変えようとして迷っている',
+    mats:[] },
+  { src:'saito', i:6, title:'I saw you man 👀', score:5, url:'https://vt.tiktok.com/ZSx5rhSAe/',
+    desc:'何かをこっそりやろうとしている人がKhabyにバッチリ見られているのに気づいていない',
+    mats:[] },
+  { src:'saito', i:12, title:'My bad, I was training 🥷🏾', score:5, url:'https://vt.tiktok.com/ZSx5rUVRf/',
+    desc:'日常の場面で突然「訓練中だった」と言い訳して大げさな格闘技ポーズを決める人',
+    mats:[] },
+  { src:'saito', i:4, title:'It happens every time 🥲', score:5, url:'https://vt.tiktok.com/ZSx5MCyFF/',
+    desc:'毎回同じ大げさなミスや失敗を繰り返す。本人は全く学習していない',
+    mats:[] },
+  { src:'saito', i:20, title:'I promise it works', score:5, url:'https://vt.tiktok.com/ZSx5hnCT3/',
+    desc:'明らかに意味のない謎の方法や装置を「これで絶対うまくいく」と言い張りながら失敗する',
+    mats:[] },
+  { src:'saito', i:7, title:'Maybe tomorrow…', score:5, url:'https://vt.tiktok.com/ZSx5rMJAR/',
+    desc:'簡単に終わる作業をいつまでも先送りにして、大げさな言い訳や準備だけして何もしない',
+    mats:[] },
+  // ★★★★★ 小道具1個
+  { src:'saito', i:9, title:'Sorry teacher, phone 📱', score:5, url:'https://vt.tiktok.com/ZSx5rhJXt/',
+    desc:'授業中にスマホを使うために服の中・机の下など大げさな隠し方をするが全部バレている',
+    mats:['スマホ'] },
+  { src:'khaby', i:9, title:'マグカップの取っ手にマスクが挟まった', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+mask+mug+handle',
+    desc:'マスクのゴムがマグカップの取っ手に引っかかって取れなくなり、取っ手を割って取り出そうとする',
+    mats:['マグカップ','マスク'] },
+  { src:'khaby', i:5, title:'バナナを包丁で切る', score:5, url:'https://www.tiktok.com/search?q=khaby+lame+banana+knife',
+    desc:'バナナをそのまま剥けばいいのに、大きな包丁でぶつ切りにして果肉を大量に無駄にする',
+    mats:['バナナ','包丁'] },
+  // ★★★★
+  { src:'saito', i:11, title:'You can try it this way too', score:4, url:'https://vt.tiktok.com/ZSx5rQq9C/',
+    desc:'簡単にできることに対して「こういうやり方もある」と超複雑な別の方法を真剣に提案する',
+    mats:[] },
+  { src:'saito', i:5, title:'Here some options 👍🏿', score:4, url:'https://vt.tiktok.com/ZSx5MwW5P/',
+    desc:'1つの問題に対して全部大げさで誰もやらないような選択肢を何個も並べて真顔で提示する',
+    mats:[] },
+  { src:'saito', i:14, title:'Express delivery 🔥📦', score:4, url:'https://vt.tiktok.com/ZSx5hRCGT/',
+    desc:'普通に手渡せばいい荷物をドローンや滑車など大げさな仕掛けで届けようとして失敗する',
+    mats:['箱'] },
+  { src:'saito', i:15, title:'Someone help the cameraman 📷', score:4, url:'https://vt.tiktok.com/ZSx5rvmYe/',
+    desc:'撮影中のカメラマンが大変な状況になっているのに誰も助けず、Khabyだけが気づく',
+    mats:['スマホ'] },
+  { src:'saito', i:17, title:'So… is this how they work???🤔', score:4, url:'https://vt.tiktok.com/ZSx5hXEbL/',
+    desc:'日用品をあり得ない使い方で使おうとしている人。明らかに間違っているのに本人は真剣',
+    mats:['日用品1個'] },
+  { src:'saito', i:18, title:'Toilets not comfortable 🤲🏾', score:4, url:'https://vt.tiktok.com/ZSx5hPqCg/',
+    desc:'普通のトイレを謎の座り方・使い方で使おうとして苦労している。普通に座ればいいだけ',
+    mats:[] },
+  { src:'saito', i:1, title:'Very refreshing 👍🏿', score:4, url:'https://vt.tiktok.com/ZSx5M2rdS/',
+    desc:'飲み物を冷やすために冷蔵庫でなく大げさな装置や方法を使おうとして結果が悪い',
+    mats:['ペットボトル'] },
+  { src:'khaby', i:4, title:'Tシャツがドアに挟まった', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+shirt+car+door',
+    desc:'シャツが車のドアに挟まって取れなくなり、ドアを開けるだけなのにハサミでシャツを切る',
+    mats:['シャツ','ドア（車or部屋）'] },
+  { src:'khaby', i:2, title:'ドアを足でブロック', score:4, url:'https://www.tiktok.com/search?q=khaby+lame+door+blocked',
+    desc:'女性がドアを足でブロックしていて男性が入れず、窓から入ろうとする。足をどかせばいいだけ',
+    mats:['ドア','2人'] },
+  // ★★★
+  { src:'saito', i:3, title:'My bad, save your life 💀', score:3, url:'https://vt.tiktok.com/ZSx5M6vYa/',
+    desc:'全く危険でない状況なのに「命を救おうとした」と大げさな行動をとって逆に迷惑をかける',
+    mats:['小道具1〜2個'] },
+  { src:'saito', i:8, title:'I got you bro 👍🏿', score:3, url:'https://vt.tiktok.com/ZSx5rYN3G/',
+    desc:'全然困っていない人に対して大げさなサポートをしようとして、逆に邪魔になる',
+    mats:['2人'] },
+  { src:'saito', i:0, title:'Must be the wind 👀', score:3, url:'https://vt.tiktok.com/ZSx5MR78S/',
+    desc:'明らかに自分のせいで起きたことや自分がやったことを「風のせい」と言い張ってとぼける',
+    mats:['屋外'] },
+  { src:'saito', i:10, title:'Level ♾️', score:3, url:'https://vt.tiktok.com/ZSx5rsLFg/',
+    desc:'普通のライフハックが段階的にエスカレートして、ついに意味不明なレベルまで到達してしまう',
+    mats:['シーン次第'] },
 ];
 
 let aiPage = 0; // 0=1〜20本目, 1=21〜40本目...
@@ -922,37 +968,23 @@ function renderAI() {
   const el = document.getElementById('aiList');
   if (!items.length) { el.innerHTML = '<div style="color:#333;text-align:center;padding:16px;">全候補を表示済み</div>'; return; }
 
-  el.innerHTML = items.map((v, idx) => {
-    const key = `ai_detail_${v.src}_${v.i}`;
-    const saved = JSON.parse(localStorage.getItem(key) || '{}');
-    const desc = saved.desc || '';
-    const mats = saved.mats || [];
-    return `
+  el.innerHTML = items.map((v, idx) => `
     <div class="saito-item" style="flex-direction:column;align-items:stretch;border-color:${v.score>=5?'#1a2a00':v.score>=4?'#1a1a00':'#1a1a1a'};">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="saito-num" style="color:${v.score>=5?'#22c55e':v.score>=4?'#f59e0b':'#888'};">${'★'.repeat(v.score)}</div>
-        <div class="saito-title" style="flex:1;">
-          <div>${esc(v.title)}</div>
-          <div style="font-size:11px;color:#444;margin-top:2px;">${esc(v.hint)}</div>
-          ${desc ? `<div style="font-size:11px;color:#888;margin-top:3px;">📹 ${esc(desc)}</div>` : ''}
-          ${mats.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${mats.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:12px;padding:1px 8px;font-size:10px;">🎒 ${esc(m)}</span>`).join('')}</div>` : ''}
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div class="saito-num" style="color:${v.score>=5?'#22c55e':v.score>=4?'#f59e0b':'#888'};min-width:30px;">${'★'.repeat(v.score)}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:bold;color:#fff;margin-bottom:4px;">${esc(v.title)}</div>
+          <div style="font-size:12px;color:#999;line-height:1.5;margin-bottom:6px;">📹 ${esc(v.desc)}</div>
+          ${v.mats.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;">
+            ${v.mats.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:12px;padding:2px 9px;font-size:11px;">🎒 ${esc(m)}</span>`).join('')}
+          </div>` : `<span style="font-size:11px;color:#22c55e;">✅ 道具不要</span>`}
         </div>
         <div class="saito-btns" style="flex-shrink:0;">
-          <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁</a>
-          <button class="s-btn" onclick="toggleAIDetail('ai-detail-${idx}')" style="background:#111;border:1px solid #333;color:#888;">📝</button>
+          <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁 見る</a>
           <button class="s-btn s-add" onclick="addFromAI(${idx})">＋</button>
         </div>
       </div>
-      <div class="ai-detail" id="ai-detail-${idx}">
-        <textarea class="ai-detail-input" id="ai-desc-${idx}" placeholder="📹 動画の内容（例：男がバナナを包丁で切ろうとしている）" rows="2">${esc(desc)}</textarea>
-        <div class="ai-mat-row">
-          <input class="ai-detail-input" id="ai-mat-${idx}" placeholder="🎒 必要な道具（バナナ、包丁 など コンマ区切り）" style="margin:0;" />
-        </div>
-        ${mats.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">${mats.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:12px;padding:2px 8px;font-size:11px;">${esc(m)}</span>`).join('')}</div>` : ''}
-        <button class="ai-save-btn" onclick="saveAIDetail(${idx},'${key}')">💾 保存</button>
-      </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 function toggleAIDetail(id) {
