@@ -140,6 +140,14 @@
   .s-add:hover { background: #0e2b0e; }
   @media(max-width:480px){ .saito-item { flex-direction:column; align-items:flex-start; } }
 
+  /* ─ AIリスト詳細入力 ─ */
+  .ai-detail { background: #0d0d0d; border-top: 1px solid #222; margin-top: 10px; padding-top: 10px; display: none; }
+  .ai-detail.open { display: block; }
+  .ai-detail-input { width: 100%; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; color: #fff; font-size: 12px; padding: 8px 10px; outline: none; font-family: inherit; resize: none; margin-bottom: 8px; }
+  .ai-detail-input:focus { border-color: #f59e0b; }
+  .ai-mat-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .ai-save-btn { background: #f59e0b; color: #000; border: none; border-radius: 7px; font-size: 12px; font-weight: bold; padding: 6px 14px; cursor: pointer; }
+
   /* ─ Khaby元ネタDB ─ */
   .khaby-card { background: #0e0900; border: 1px solid #3a2500; border-radius: 14px; padding: 15px 16px; margin-bottom: 10px; }
   .khaby-card:hover { border-color: #f59e0b; }
@@ -914,18 +922,51 @@ function renderAI() {
   const el = document.getElementById('aiList');
   if (!items.length) { el.innerHTML = '<div style="color:#333;text-align:center;padding:16px;">全候補を表示済み</div>'; return; }
 
-  el.innerHTML = items.map((v, idx) => `
-    <div class="saito-item" style="border-color:${v.score>=5?'#1a2a00':v.score>=4?'#1a1a00':'#1a1a1a'};">
-      <div class="saito-num" style="color:${v.score>=5?'#22c55e':v.score>=4?'#f59e0b':'#888'};">${'★'.repeat(v.score)}</div>
-      <div class="saito-title">
-        <div>${esc(v.title)}</div>
-        <div style="font-size:11px;color:#444;margin-top:2px;">${esc(v.hint)}</div>
+  el.innerHTML = items.map((v, idx) => {
+    const key = `ai_detail_${v.src}_${v.i}`;
+    const saved = JSON.parse(localStorage.getItem(key) || '{}');
+    const desc = saved.desc || '';
+    const mats = saved.mats || [];
+    return `
+    <div class="saito-item" style="flex-direction:column;align-items:stretch;border-color:${v.score>=5?'#1a2a00':v.score>=4?'#1a1a00':'#1a1a1a'};">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="saito-num" style="color:${v.score>=5?'#22c55e':v.score>=4?'#f59e0b':'#888'};">${'★'.repeat(v.score)}</div>
+        <div class="saito-title" style="flex:1;">
+          <div>${esc(v.title)}</div>
+          <div style="font-size:11px;color:#444;margin-top:2px;">${esc(v.hint)}</div>
+          ${desc ? `<div style="font-size:11px;color:#888;margin-top:3px;">📹 ${esc(desc)}</div>` : ''}
+          ${mats.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${mats.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:12px;padding:1px 8px;font-size:10px;">🎒 ${esc(m)}</span>`).join('')}</div>` : ''}
+        </div>
+        <div class="saito-btns" style="flex-shrink:0;">
+          <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁</a>
+          <button class="s-btn" onclick="toggleAIDetail('ai-detail-${idx}')" style="background:#111;border:1px solid #333;color:#888;">📝</button>
+          <button class="s-btn s-add" onclick="addFromAI(${idx})">＋</button>
+        </div>
       </div>
-      <div class="saito-btns">
-        <a class="s-btn s-watch" href="${esc(v.url)}" target="_blank">👁 見る</a>
-        <button class="s-btn s-add" onclick="addFromAI(${idx})">＋ 追加</button>
+      <div class="ai-detail" id="ai-detail-${idx}">
+        <textarea class="ai-detail-input" id="ai-desc-${idx}" placeholder="📹 動画の内容（例：男がバナナを包丁で切ろうとしている）" rows="2">${esc(desc)}</textarea>
+        <div class="ai-mat-row">
+          <input class="ai-detail-input" id="ai-mat-${idx}" placeholder="🎒 必要な道具（バナナ、包丁 など コンマ区切り）" style="margin:0;" />
+        </div>
+        ${mats.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">${mats.map(m=>`<span style="background:#1a0a00;border:1px solid #f59e0b;color:#f59e0b;border-radius:12px;padding:2px 8px;font-size:11px;">${esc(m)}</span>`).join('')}</div>` : ''}
+        <button class="ai-save-btn" onclick="saveAIDetail(${idx},'${key}')">💾 保存</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+function toggleAIDetail(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function saveAIDetail(idx, key) {
+  const desc = document.getElementById(`ai-desc-${idx}`)?.value.trim() || '';
+  const matInput = document.getElementById(`ai-mat-${idx}`)?.value.trim() || '';
+  const mats = matInput ? matInput.split(/[,、，]/).map(s=>s.trim()).filter(Boolean) : [];
+  localStorage.setItem(key, JSON.stringify({ desc, mats }));
+  renderAI();
+  toast('保存しました！');
 }
 
 function addFromAI(idx) {
